@@ -56,7 +56,7 @@
                 [cdkDragData]="ingredient"
                 (click)="addIngredient(ingredient)"
                 [attr.aria-label]="'Agregar ' + ingredient.label">
-                <img [src]="photoUrl(ingredient.label)" [alt]="ingredient.label" draggable="false">
+                <img [src]="photoUrl(ingredient.label)" [alt]="ingredient.label" draggable="false" (error)="setPhotoFallback($event)">
                 <span>{{ ingredient.label }}</span>
                 <small>{{ ingredient.amount }} {{ ingredient.unit }}</small>
               </button>
@@ -82,7 +82,7 @@
               @for (ingredient of selectedIngredients; track ingredient.label + $index; let i = $index) {
                 <article class="selected-ingredient" cdkDrag [cdkDragData]="ingredient">
                   <span class="drag-handle" aria-label="Arrastrar para reordenar">⠿</span>
-                  <img [src]="photoUrl(ingredient.label)" [alt]="ingredient.label" draggable="false">
+                  <img [src]="photoUrl(ingredient.label)" [alt]="ingredient.label" draggable="false" (error)="setPhotoFallback($event)">
                   <strong>{{ ingredient.label }}</strong>
                   <input
                     aria-label="Cantidad"
@@ -119,9 +119,9 @@
               <article class="recommendation-card">
                 <div class="recommendation-image">
                   @if (recipe.image_url) {
-                    <img [src]="recipe.image_url" [alt]="recipe.title" loading="lazy">
+                    <img [src]="recipe.image_url" [alt]="recipe.title" loading="lazy" (error)="setPhotoFallback($event)">
                   } @else {
-                    <img [src]="photoUrl(recipe.ingredients?.[0]?.label || 'comida')" [alt]="recipe.title" loading="lazy">
+                    <img [src]="photoUrl(recipe.ingredients?.[0]?.label || 'comida')" [alt]="recipe.title" loading="lazy" (error)="setPhotoFallback($event)">
                   }
                   <span class="match-score">{{ recipe.match_score }}% match</span>
                 </div>
@@ -158,7 +158,7 @@
               <div class="recipe-ingredient-preview">
                 @for (ingredient of recipe.ingredients || []; track ingredient.label) {
                   <span title="{{ ingredient.label }}: {{ ingredient.amount }} {{ ingredient.unit }}">
-                    <img [src]="photoUrl(ingredient.label)" [alt]="ingredient.label" draggable="false">
+                    <img [src]="photoUrl(ingredient.label)" [alt]="ingredient.label" draggable="false" (error)="setPhotoFallback($event)">
                   </span>
                 }
               </div>

@@ -178,6 +178,13 @@ export class RecipesComponent implements OnInit {
     return `${photo || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c'}?auto=format&fit=crop&w=320&h=220&q=80`;
   }
 
+  setPhotoFallback(event: Event): void {
+    const image = event.target as HTMLImageElement;
+    if (!image.src.endsWith('/ingredients/placeholder.svg')) {
+      image.src = '/ingredients/placeholder.svg';
+    }
+  }
+
   addIngredient(ingredient: Ingredient): void {
     const alreadySelected = this.selectedIngredients.some(
       item => item.label.toLowerCase() === ingredient.label.toLowerCase()
