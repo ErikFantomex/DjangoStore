@@ -1,0 +1,29 @@
+{% load static %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eatery Trainer Portal</title>
+    <!-- Aquí puedes agregar tus hojas de estilo, scripts, etc. -->
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <img src="{% static 'assets/logo.jpg' %}" alt="Logo Eatery Trainer Portal">
+        <h1>Eatery Trainer Portal</h1>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- El contenido específico de cada página se insertará aquí -->
+        {% endblock %}
+    </main>
+</div>
+
+<!-- Aquí puedes agregar scripts de JavaScript, si los necesitas -->
+
+</body>
+</html>

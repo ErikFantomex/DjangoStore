@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    <h1>Eatery Trainer Portal</h1>
+    <h2>What Would You Like To Do</h2>
+
+    <button hx-get="{% url 'add_new_client' %}">ADD A NEW CLIENT</button>
+    <button hx-get="{% url 'edit_client' %}">EDIT CLIENT</button>
+    <button hx-get="{% url 'create_meal_plan' %}">CREATE MEAL-PLAN FOR A CLIENT</button>
+    <button hx-get="{% url 'add_new_meal' %}">ADD A NEW MEAL</button>
+    <button hx-get="{% url 'edit_meal' %}">EDIT MEAL</button>
+</div>
+{% endblock %}

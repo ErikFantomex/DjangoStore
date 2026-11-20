@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ mealplan.meal_plan_id }} - {{ mealplan.client_name }}</h2>
+<p>Tipo: {{ mealplan.plan_type }}</p>
+<p>Duración: {{ mealplan.plan_length_in_weeks }} semanas</p>
+<p>Semana actual: {{ mealplan.current_week }}</p>
+<p>Peso: {{ mealplan.client_weight }} kg</p>
+<p>Altura: {{ mealplan.client_height }} cm</p>
+{% endblock %}

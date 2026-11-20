@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Eatery</h2>
+{% if user.is_authenticated %}
+<nav>
+  <a href="{% url 'core:recipe-list' %}">Recetas</a>
+  <a href="{% url 'core:mealplan-list' %}">Planes de comida</a>
+</nav>
+{% else %}
+<a href="{% url 'user:login' %}">Iniciar sesión</a>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="client-info-form">
+    <h2>Client's Info</h2>
+
+    <form method="post" action="{% url 'add_new_client_action' %}">
+        {% csrf_token %}
+
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" placeholder="Diego Vega">
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="diegovega@demo.com">
+
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" placeholder="+1 630 777 1234">
+
+        <label for="height">Height</label>
+        <input type="text" id="height" name="height" placeholder="6'0">
+
+        <label for="weight">Weight</label>
+        <input type="text" id="weight" name="weight" placeholder="177lbs">
+
+        <label for="dietary">Dietary Preferences</label>
+        <select id="dietary" name="dietary">
+            <option value="" disabled selected>-----</option>
+            <option value="vegetarian">Vegetarian</option>
+            <option value="vegan">Vegan</option>
+            <option value="pescatarian">Pescatarian</option>
+            <!-- Añade más opciones según tus necesidades -->
+        </select>
+
+        <label for="mealplan">Meal-plan type</label>
+        <select id="mealplan" name="mealplan">
+            <option value="beginner_weight_loss_weekly">Beginner - weight loss [Weekly]</option>
+            <!-- Añade más opciones según tus necesidades -->
+        </select>
+
+        <label for="goal_weight">Goal weight</label>
+        <input type="text" id="goal_weight" name="goal_weight" placeholder="170lbs">
+
+        <label for="plan_duration">Estimated duration of plan</label>
+        <input type="number" id="plan_duration" name="plan_duration" placeholder="13 weeks">
+
+        <label for="notes">Notes</label>
+        <textarea id="notes" name="notes" rows="4">
+Diego usually skips breakfast and starts eating around noon.
+Only eats meat a few times a week.
+Likes eating carbs and a salad for lunch to stay energized through the day.
+        </textarea>
+
+        <label for="meal_prep_day">Meal prep day</label>
+        <input type="text" id="meal_prep_day" name="meal_prep_day" placeholder="Sunday">
+
+        <button type="submit">SAVE</button>
+    </form>
+</div>
+{% endblock %}

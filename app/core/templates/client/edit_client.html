@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+<div class="client-info">
+
+    <form hx-post="{% url 'client_update' %}" method="post">
+        {% csrf_token %}
+
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" value="{{ client.name }}" required>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" value="{{ client.email }}" required>
+
+        <label for="phone_number">Phone Number</label>
+        <input type="tel" id="phone_number" name="phone_number" value="{{ client.phone_number }}" required>
+
+        <label for="height">Height</label>
+        <input type="text" id="height" name="height" value="{{ client.height }}" required>
+
+        <label for="weight">Weight</label>
+        <input type="number" id="weight" name="weight" value="{{ client.weight }}" required>
+
+        <label for="meal_plan_type">Meal-plan type</label>
+        <select id="meal_plan_type" name="meal_plan_type" required>
+            <option value="beginner" {% if client.meal_plan_type == "beginner" %} selected {% endif %}>Beginner - weight loss [Weekly]</option>
+            <!-- Other options here -->
+        </select>
+
+        <label for="goal_weight">Goal weight</label>
+        <input type="number" id="goal_weight" name="goal_weight" value="{{ client.goal_weight }}" required>
+
+        <label for="dietary_preferences">Dietary Preferences</label>
+        <select id="dietary_preferences" name="dietary_preferences" required>
+            <!-- Options here based on your choices -->
+        </select>
+
+        <label for="estimated_duration">Estimated duration of plan</label>
+        <input type="number" id="estimated_duration" name="estimated_duration" value="{{ client.estimated_duration }}" required>
+
+        <label for="notes">Notes</label>
+        <textarea id="notes" name="notes">{{ client.notes }}</textarea>
+
+        <label for="meal_prep_day">Meal prep day</label>
+        <select id="meal_prep_day" name="meal_prep_day" required>
+            <option value="sunday" {% if client.meal_prep_day == "sunday" %} selected {% endif %}>Sunday</option>
+            <!-- Other options here -->
+        </select>
+
+        <button type="submit">SAVE</button>
+        <button type="button" hx-get="{% url 'client_delete' %}" hx-confirm="Are you sure you want to delete?">DELETE</button>
+    </form>
+
+</div>
+{% endblock %}
