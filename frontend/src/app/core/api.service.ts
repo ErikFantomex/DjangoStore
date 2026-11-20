@@ -10,6 +10,9 @@ export class ApiService {
   recipes(): Observable<Recipe[]> { return this.http.get<Recipe[]>('/api/recipe/recipes/'); }
   recipe(id: number): Observable<Recipe> { return this.http.get<Recipe>(`/api/recipe/recipes/${id}/`); }
   createRecipe(payload: Recipe): Observable<Recipe> { return this.http.post<Recipe>('/api/recipe/recipes/', payload); }
+  recommendRecipes(ingredients: string[]): Observable<Recipe[]> {
+    return this.http.post<Recipe[]>('/api/recipe/recipes/recommend/', { ingredients });
+  }
   updateRecipe(id: number, payload: Partial<Recipe>): Observable<Recipe> { return this.http.patch<Recipe>(`/api/recipe/recipes/${id}/`, payload); }
   deleteRecipe(id: number): Observable<void> { return this.http.delete<void>(`/api/recipe/recipes/${id}/`); }
 

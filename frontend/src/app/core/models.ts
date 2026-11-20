@@ -17,6 +17,8 @@ export interface Recipe {
   ingredients?: Ingredient[];
   instructions: string;
   nutritionalInfo: Record<string, unknown>;
+  match_score?: number;
+  matching_ingredients?: number;
 }
 
 export interface Ingredient {

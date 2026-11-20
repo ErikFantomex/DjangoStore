@@ -86,6 +86,46 @@
           }
         </div>
       </div>
+
+      @if (selectedIngredients.length) {
+        <section class="recommendations-panel" aria-live="polite">
+          <div class="recommendations-header">
+            <div>
+              <span class="eyebrow">Sugerencias inteligentes</span>
+              <h3>Recetas que coinciden</h3>
+            </div>
+            @if (recommendationsLoading) { <small class="muted">Analizando...</small> }
+          </div>
+          <div class="recommendation-grid">
+            @for (recipe of recommendations; track recipe.id) {
+              <article class="recommendation-card">
+                <div class="recommendation-image">
+                  @if (recipe.image_url) {
+                    <img [src]="recipe.image_url" [alt]="recipe.title" loading="lazy">
+                  } @else {
+                    <img [src]="photoUrl(recipe.ingredients?.[0]?.label || 'comida')" [alt]="recipe.title" loading="lazy">
+                  }
+                  <span class="match-score">{{ recipe.match_score }}% match</span>
+                </div>
+                <div class="recommendation-copy">
+                  <h4>{{ recipe.title }}</h4>
+                  <p class="muted">
+                    {{ recipe.matching_ingredients }} ingrediente(s) coincidente(s)
+                  </p>
+                  <button type="button" class="btn secondary" (click)="useRecommendation(recipe)">
+                    Usar estructura
+                  </button>
+                </div>
+              </article>
+            } @empty {
+              @if (!recommendationsLoading) {
+                <p class="muted recommendation-empty">No hay recetas coincidentes todavía.</p>
+              }
+            }
+          </div>
+        </section>
+      }
+
       <div class="field"><label>Informacion nutricional (JSON)</label><textarea formControlName="nutritionalInfo"></textarea></div>
       <button class="btn" type="submit" [disabled]="form.invalid">{{ editingId ? 'Guardar cambios' : 'Crear receta' }}</button>
     </form>

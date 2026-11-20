@@ -17,6 +17,8 @@ export class RecipesComponent implements OnInit {
   tags: Tag[] = [];
   ingredients: Ingredient[] = [];
   selectedIngredients: Ingredient[] = [];
+  recommendations: Recipe[] = [];
+  recommendationsLoading = false;
   editingId: number | null = null;
   error = '';
   catalogIngredients: Ingredient[] = [
@@ -86,6 +88,7 @@ export class RecipesComponent implements OnInit {
     if (!alreadySelected) {
       this.selectedIngredients = [...this.selectedIngredients, { ...ingredient }];
       this.syncIngredientsText();
+      this.refreshRecommendations();
     }
   }
 
@@ -103,12 +106,14 @@ export class RecipesComponent implements OnInit {
   reorderIngredient(event: CdkDragDrop<Ingredient[]>): void {
     moveItemInArray(this.selectedIngredients, event.previousIndex, event.currentIndex);
     this.syncIngredientsText();
+    this.refreshRecommendations();
   }
 
   removeSelectedIngredient(index: number): void {
     this.selectedIngredients.splice(index, 1);
     this.selectedIngredients = [...this.selectedIngredients];
     this.syncIngredientsText();
+    this.refreshRecommendations();
   }
 
   updateIngredient(index: number, field: 'amount' | 'unit', value: string): void {
@@ -122,6 +127,43 @@ export class RecipesComponent implements OnInit {
         .map(item => `${item.label}|${item.amount}|${item.unit}`)
         .join('\n')
     );
+  }
+
+  refreshRecommendations(): void {
+    const labels = this.selectedIngredients.map(item => item.label);
+    if (!labels.length) {
+      this.recommendations = [];
+      return;
+    }
+    this.recommendationsLoading = true;
+    this.api.recommendRecipes(labels).subscribe({
+      next: items => {
+        this.recommendations = items;
+        this.recommendationsLoading = false;
+      },
+      error: () => {
+        this.recommendations = [];
+        this.recommendationsLoading = false;
+      }
+    });
+  }
+
+  useRecommendation(recipe: Recipe): void {
+    this.editingId = null;
+    this.selectedIngredients = (recipe.ingredients || []).map(item => ({ ...item }));
+    this.form.patchValue({
+      title: recipe.title,
+      meal_id: recipe.meal_id,
+      description: recipe.description || '',
+      image_url: recipe.image_url,
+      isMealPrepRecipe: recipe.isMealPrepRecipe,
+      time_minutes: recipe.time_minutes,
+      price_level: recipe.price_level,
+      instructions: recipe.instructions,
+      tagsText: (recipe.tags || []).map(tag => tag.name).join(', '),
+      nutritionalInfo: JSON.stringify(recipe.nutritionalInfo || {}, null, 2)
+    });
+    this.syncIngredientsText();
   }
 
   edit(recipe: Recipe): void {
@@ -140,11 +182,13 @@ export class RecipesComponent implements OnInit {
       ingredientsText: (recipe.ingredients || []).map(item => `${item.label}|${item.amount}|${item.unit}`).join('\n'),
       nutritionalInfo: JSON.stringify(recipe.nutritionalInfo || {}, null, 2)
     });
+    this.refreshRecommendations();
   }
 
   reset(): void {
     this.editingId = null;
     this.selectedIngredients = [];
+    this.recommendations = [];
     this.error = '';
     this.form.reset({
       title: '', meal_id: '', description: '', image_url: '',

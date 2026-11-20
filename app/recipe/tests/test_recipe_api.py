@@ -4,7 +4,7 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from core.models import Meal, MealPlan, Recipe
+from core.models import Ingredient, Meal, MealPlan, Recipe
 
 
 RECIPES_URL = reverse('recipe:recipe-list')
@@ -92,6 +92,26 @@ class RecipeApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         recipe.refresh_from_db()
         self.assertEqual(recipe.title, 'Receta de prueba')
+
+    def test_recommend_recipes_by_ingredients(self):
+        recipe = create_recipe(self.user)
+        ingredient = Ingredient.objects.create(
+            user=self.user,
+            label='Lechuga',
+            amount='100',
+            unit='g',
+        )
+        recipe.ingredients.add(ingredient)
+
+        response = self.client.post(
+            '/api/recipe/recipes/recommend/',
+            {'ingredients': ['Lechuga', 'Tomate']},
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data[0]['title'], 'Receta de prueba')
+        self.assertGreater(response.data[0]['match_score'], 0)
 
     def test_reject_invalid_price_level(self):
         payload = {
