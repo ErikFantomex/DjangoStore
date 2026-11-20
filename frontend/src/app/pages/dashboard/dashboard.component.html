@@ -1,0 +1,27 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <p class="muted">Resumen general</p>
+      <h1>Hola, {{ name || 'nutriologo' }}</h1>
+    </div>
+  </div>
+
+  <section class="grid three stats">
+    <a class="card stat" routerLink="/recetas"><span>Recetas</span><strong>{{ recipes }}</strong></a>
+    <a class="card stat" routerLink="/planes"><span>Planes activos</span><strong>{{ plans }}</strong></a>
+    <a class="card stat" routerLink="/comidas"><span>Comidas</span><strong>{{ meals }}</strong></a>
+  </section>
+
+  <section class="grid two quick-actions">
+    <article class="card">
+      <h2>Crear una receta</h2>
+      <p class="muted">Organiza ingredientes, etiquetas y datos nutricionales.</p>
+      <a class="btn" routerLink="/recetas">Abrir recetas</a>
+    </article>
+    <article class="card">
+      <h2>Preparar un plan</h2>
+      <p class="muted">Define objetivos, semanas y seguimiento del paciente.</p>
+      <a class="btn" routerLink="/planes">Abrir planes</a>
+    </article>
+  </section>
+</div>

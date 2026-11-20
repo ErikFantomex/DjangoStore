@@ -1,0 +1,13 @@
+.plan-layout { grid-template-columns:minmax(330px, 1fr) minmax(280px,.75fr); align-items:start; }
+.plan-form { padding:1.25rem; }
+.plan-list { display:grid; gap:.75rem; }
+.plan-card { padding:1rem; display:flex; justify-content:space-between; gap:1rem; }
+.plan-card h2 { margin:.1rem 0; }
+.plan-card p { margin:.25rem 0; }
+.actions { display:flex; gap:.45rem; }
+.actions .btn { min-height:38px; padding:.55rem .7rem; }
+.day-picker { display:flex; flex-wrap:wrap; gap:.45rem; }
+.day-picker button { border:1px solid var(--border); background:white; border-radius:999px; padding:.55rem .7rem; cursor:pointer; }
+.day-picker button.selected { background:var(--primary); color:white; border-color:var(--primary); }
+.empty { padding:1.25rem; }
+@media (max-width:980px) { .plan-layout { grid-template-columns:1fr; } }

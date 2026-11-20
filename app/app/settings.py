@@ -137,7 +137,7 @@ CORS_ALLOW_ALL_ORIGINS = config(
 )
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
-    default='',
+    default='http://localhost:4200,http://127.0.0.1:4200',
     cast=Csv(),
 )
 

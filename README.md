@@ -39,6 +39,18 @@ Web App para Nutriólogos | Django
 
 ## 📦 Instalación y puesta en marcha
 
+### Proyecto completo con Angular
+
+```powershell
+docker compose up --build
+```
+
+- Frontend Angular: `http://localhost:4200`
+- Backend Django: `http://localhost:8000`
+- Documentacion API: `http://localhost:8000/api/docs/`
+
+El frontend consume el backend por el prefijo `/api` y usa autenticacion por token.
+
 ### Docker
 
 ```powershell

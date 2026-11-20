@@ -1,0 +1,12 @@
+.recipe-layout { grid-template-columns:minmax(320px, 1fr) minmax(280px, .75fr); align-items:start; }
+.recipe-form { padding:1.25rem; }
+.recipe-form h2 { margin-top:0; }
+.recipe-list { display:grid; gap:.75rem; }
+.recipe-card { padding:1rem; display:flex; justify-content:space-between; gap:1rem; }
+.recipe-card h2 { margin:.1rem 0 .25rem; font-size:1.05rem; }
+.recipe-card p { margin:.25rem 0 .4rem; }
+.actions { display:flex; align-items:flex-start; gap:.45rem; }
+.actions .btn { min-height:38px; padding:.55rem .7rem; }
+.empty { padding:1.25rem; }
+@media (max-width:980px) { .recipe-layout { grid-template-columns:1fr; } }
+@media (max-width:560px) { .recipe-card { flex-direction:column; } }

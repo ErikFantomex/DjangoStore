@@ -1,0 +1,25 @@
+<div class="page">
+  <div class="page-header"><h1>Comidas</h1></div>
+  <div class="grid meals-layout">
+    <form class="card meals-form" [formGroup]="form" (ngSubmit)="submit()">
+      <h2>{{ editingId ? 'Editar comida' : 'Nueva comida' }}</h2>
+      @if (error) { <p class="error">{{ error }}</p> }
+      <div class="field"><label>ID</label><input formControlName="meal_id"></div>
+      <div class="field"><label>Nombre</label><input formControlName="name"></div>
+      <div class="form-actions">
+        <button class="btn" type="submit" [disabled]="form.invalid">Guardar</button>
+        @if (editingId) { <button class="btn secondary" type="button" (click)="reset()">Cancelar</button> }
+      </div>
+    </form>
+    <section class="card table-wrap">
+      <table>
+        <thead><tr><th>ID</th><th>Nombre</th><th>Acciones</th></tr></thead>
+        <tbody>
+          @for (meal of meals; track meal.id) {
+            <tr><td>{{ meal.meal_id }}</td><td>{{ meal.name }}</td><td><button class="btn secondary" type="button" (click)="edit(meal)">Editar</button> <button class="btn danger" type="button" (click)="remove(meal)">Eliminar</button></td></tr>
+          } @empty { <tr><td colspan="3">Todavia no hay comidas.</td></tr> }
+        </tbody>
+      </table>
+    </section>
+  </div>
+</div>

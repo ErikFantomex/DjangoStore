@@ -1,0 +1,123 @@
+/* You can add global styles to this file, and also import other style files */
+:root {
+  --primary: #24584a;
+  --primary-dark: #173e34;
+  --accent: #e7a52f;
+  --surface: #ffffff;
+  --background: #f3f6f4;
+  --text: #1c2b26;
+  --muted: #6c7b75;
+  --border: #dde7e1;
+  --danger: #a83b32;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; min-height: 100%; }
+
+body {
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  color: var(--text);
+  background: var(--background);
+}
+
+button, input, textarea, select { font: inherit; }
+
+button, a { -webkit-tap-highlight-color: transparent; }
+
+.page { max-width: 1180px; margin: 0 auto; }
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.page-header h1 { margin: 0; font-size: clamp(1.45rem, 4vw, 2rem); }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 12px 32px rgba(31, 74, 60, .07);
+}
+
+.field {
+  display: grid;
+  gap: .45rem;
+  margin-bottom: 1rem;
+}
+
+.field label { font-weight: 700; font-size: .92rem; }
+
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: .72rem .85rem;
+  background: white;
+  color: var(--text);
+}
+
+.field textarea { min-height: 110px; resize: vertical; }
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  outline: 3px solid rgba(36, 88, 74, .12);
+  border-color: var(--primary);
+}
+
+.btn {
+  min-height: 44px;
+  border: 0;
+  border-radius: 10px;
+  padding: .72rem 1rem;
+  cursor: pointer;
+  font-weight: 800;
+  background: var(--primary);
+  color: white;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn:hover { background: var(--primary-dark); }
+.btn.secondary { background: #edf3ef; color: var(--primary); }
+.btn.danger { background: var(--danger); }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+
+.grid { display: grid; gap: 1rem; }
+.grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.error { color: var(--danger); }
+.muted { color: var(--muted); }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: .85rem; text-align: left; border-bottom: 1px solid var(--border); }
+th { color: var(--muted); font-size: .82rem; text-transform: uppercase; }
+
+.tag {
+  display: inline-flex;
+  padding: .28rem .55rem;
+  margin: .15rem;
+  border-radius: 999px;
+  background: #edf4f0;
+  color: var(--primary);
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+@media (max-width: 760px) {
+  .grid.two, .grid.three { grid-template-columns: 1fr; }
+  .page-header { align-items: flex-start; flex-direction: column; }
+  .card { border-radius: 14px; }
+}

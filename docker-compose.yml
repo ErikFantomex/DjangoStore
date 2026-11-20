@@ -1,4 +1,17 @@
 services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./frontend:/app
+      - frontend-node-modules:/app/node_modules
+    environment:
+      - NODE_OPTIONS=--openssl-legacy-provider
+    depends_on:
+      - app
+
   app:
     build:
       context: .
@@ -44,7 +57,6 @@ services:
 volumes:
   dev-db-data:
   dev-static-data:
-
-
+  frontend-node-modules:
 
 

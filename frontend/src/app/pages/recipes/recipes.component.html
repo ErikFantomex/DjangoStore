@@ -1,0 +1,47 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Recetas</h1>
+    @if (editingId) { <button class="btn secondary" type="button" (click)="reset()">Cancelar edicion</button> }
+  </div>
+
+  <div class="grid recipe-layout">
+    <form class="card recipe-form" [formGroup]="form" (ngSubmit)="submit()">
+      <h2>{{ editingId ? 'Editar receta' : 'Nueva receta' }}</h2>
+      @if (error) { <p class="error">{{ error }}</p> }
+      <div class="grid two">
+        <div class="field"><label>Titulo</label><input formControlName="title"></div>
+        <div class="field"><label>ID de comida</label><input formControlName="meal_id"></div>
+      </div>
+      <div class="field"><label>Descripcion</label><textarea formControlName="description"></textarea></div>
+      <div class="field"><label>URL de imagen</label><input type="url" formControlName="image_url"></div>
+      <div class="grid three">
+        <div class="field"><label>Minutos</label><input type="number" formControlName="time_minutes"></div>
+        <div class="field"><label>Nivel de precio (1-5)</label><input type="number" min="1" max="5" formControlName="price_level"></div>
+        <div class="field"><label>Preparacion semanal</label><select formControlName="isMealPrepRecipe"><option [ngValue]="false">No</option><option [ngValue]="true">Si</option></select></div>
+      </div>
+      <div class="field"><label>Instrucciones</label><textarea formControlName="instructions"></textarea></div>
+      <div class="field"><label>Etiquetas separadas por comas</label><input formControlName="tagsText" placeholder="Ligera, Vegano"></div>
+      <div class="field"><label>Ingredientes</label><textarea formControlName="ingredientsText" placeholder="Lechuga|100|g&#10;Tomate|2|unidades"></textarea></div>
+      <div class="field"><label>Informacion nutricional (JSON)</label><textarea formControlName="nutritionalInfo"></textarea></div>
+      <button class="btn" type="submit" [disabled]="form.invalid">{{ editingId ? 'Guardar cambios' : 'Crear receta' }}</button>
+    </form>
+
+    <section class="recipe-list">
+      @for (recipe of recipes; track recipe.id) {
+        <article class="card recipe-card">
+          <div>
+            <h2>{{ recipe.title }}</h2>
+            <p class="muted">{{ recipe.time_minutes }} min · nivel {{ recipe.price_level }}</p>
+            @for (tag of recipe.tags || []; track tag.id || tag.name) { <span class="tag">{{ tag.name }}</span> }
+          </div>
+          <div class="actions">
+            <button class="btn secondary" type="button" (click)="edit(recipe)">Editar</button>
+            <button class="btn danger" type="button" (click)="remove(recipe)">Eliminar</button>
+          </div>
+        </article>
+      } @empty {
+        <article class="card empty">Todavia no hay recetas.</article>
+      }
+    </section>
+  </div>
+</div>

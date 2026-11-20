@@ -1,0 +1,6 @@
+.stats { margin-bottom: 1rem; }
+.stat { padding:1.25rem; text-decoration:none; color:var(--text); display:flex; flex-direction:column; gap:.5rem; }
+.stat span { color:var(--muted); font-weight:700; }
+.stat strong { color:var(--primary); font-size:2.2rem; }
+.quick-actions article { padding:1.25rem; }
+.quick-actions h2 { margin-top:0; }

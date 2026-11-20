@@ -1,0 +1,41 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Planes de alimentación</h1>
+    @if (editingId) { <button class="btn secondary" type="button" (click)="reset()">Cancelar edicion</button> }
+  </div>
+  <div class="grid plan-layout">
+    <form class="card plan-form" [formGroup]="form" (ngSubmit)="submit()">
+      @if (error) { <p class="error">{{ error }}</p> }
+      <div class="grid two">
+        <div class="field"><label>ID del plan</label><input formControlName="meal_plan_id"></div>
+        <div class="field"><label>Paciente</label><input formControlName="client_name"></div>
+        <div class="field"><label>Peso (kg)</label><input type="number" formControlName="client_weight"></div>
+        <div class="field"><label>Estatura (cm)</label><input type="number" formControlName="client_height"></div>
+        <div class="field"><label>Tipo de plan</label><input formControlName="plan_type"></div>
+        <div class="field"><label>Dia de preparacion</label><select formControlName="prep_day">@for (day of days; track day) { <option [value]="day">{{ day }}</option> }</select></div>
+        <div class="field"><label>Duracion (semanas)</label><input type="number" min="1" formControlName="plan_length_in_weeks"></div>
+        <div class="field"><label>Semana actual</label><input type="number" min="1" formControlName="current_week"></div>
+      </div>
+      <div class="field">
+        <label>Dias de seguimiento</label>
+        <div class="day-picker">
+          @for (day of days; track day) {
+            <button type="button" [class.selected]="form.controls.tracking_days.value.includes(day)" (click)="toggleDay(day)">{{ day.slice(0, 3) }}</button>
+          }
+        </div>
+      </div>
+      <div class="field"><label>Objetivos diarios (JSON)</label><textarea formControlName="daily_goals"></textarea></div>
+      <div class="field"><label>Comidas por dia (JSON)</label><textarea formControlName="meals_per_day"></textarea></div>
+      <div class="field"><label>Menu semanal (JSON)</label><textarea formControlName="meals"></textarea></div>
+      <button class="btn" type="submit" [disabled]="form.invalid">{{ editingId ? 'Guardar cambios' : 'Crear plan' }}</button>
+    </form>
+    <section class="plan-list">
+      @for (plan of plans; track plan.id) {
+        <article class="card plan-card">
+          <div><h2>{{ plan.client_name }}</h2><p class="muted">{{ plan.plan_type }} · semana {{ plan.current_week }}/{{ plan.plan_length_in_weeks }}</p></div>
+          <div class="actions"><button class="btn secondary" type="button" (click)="edit(plan)">Editar</button><button class="btn danger" type="button" (click)="remove(plan)">Eliminar</button></div>
+        </article>
+      } @empty { <article class="card empty">Todavia no hay planes.</article> }
+    </section>
+  </div>
+</div>

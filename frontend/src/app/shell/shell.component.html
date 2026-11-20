@@ -1,0 +1,21 @@
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="brand" routerLink="/">Portal nutricional</a>
+    <nav aria-label="Navegacion principal">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Resumen</a>
+      <a routerLink="/recetas" routerLinkActive="active">Recetas</a>
+      <a routerLink="/planes" routerLinkActive="active">Planes</a>
+      <a routerLink="/comidas" routerLinkActive="active">Comidas</a>
+      <a routerLink="/perfil" routerLinkActive="active">Perfil</a>
+    </nav>
+  </aside>
+  <main>
+    <header class="topbar">
+      <strong>Gestion nutricional</strong>
+      <button type="button" class="btn secondary" (click)="auth.logout()">Cerrar sesion</button>
+    </header>
+    <section class="content">
+      <router-outlet />
+    </section>
+  </main>
+</div>
