@@ -33,7 +33,7 @@ services:
       - DB_PASS=changeme
       - DJANGO_SECRET_KEY=django-insecure-local-development-key
       - DJANGO_DEBUG=true
-      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,app
     depends_on:
       db:
         condition: service_healthy
@@ -58,5 +58,4 @@ volumes:
   dev-db-data:
   dev-static-data:
   frontend-node-modules:
-
 
