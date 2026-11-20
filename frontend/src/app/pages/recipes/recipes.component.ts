@@ -21,17 +21,63 @@ export class RecipesComponent implements OnInit {
   recommendationsLoading = false;
   editingId: number | null = null;
   error = '';
+  catalogSearch = '';
+  catalogCategory = 'Todos';
+  catalogCategories = [
+    'Todos', 'Verduras', 'Frutas', 'Proteinas', 'Cereales',
+    'Lacteos', 'Legumbres', 'Condimentos'
+  ];
   catalogIngredients: Ingredient[] = [
-    { label: 'Lechuga', amount: '100', unit: 'g' },
-    { label: 'Tomate', amount: '1', unit: 'pieza' },
-    { label: 'Aguacate', amount: '1', unit: 'pieza' },
-    { label: 'Pollo', amount: '150', unit: 'g' },
-    { label: 'Avena', amount: '50', unit: 'g' },
-    { label: 'Arroz', amount: '100', unit: 'g' },
-    { label: 'Huevo', amount: '1', unit: 'pieza' },
-    { label: 'Platano', amount: '1', unit: 'pieza' },
-    { label: 'Manzana', amount: '1', unit: 'pieza' },
-    { label: 'Brocoli', amount: '100', unit: 'g' }
+    { label: 'Lechuga', amount: '100', unit: 'g', category: 'Verduras' },
+    { label: 'Tomate', amount: '1', unit: 'pieza', category: 'Verduras' },
+    { label: 'Aguacate', amount: '1', unit: 'pieza', category: 'Frutas' },
+    { label: 'Brocoli', amount: '100', unit: 'g', category: 'Verduras' },
+    { label: 'Espinaca', amount: '100', unit: 'g', category: 'Verduras' },
+    { label: 'Pepino', amount: '1', unit: 'pieza', category: 'Verduras' },
+    { label: 'Zanahoria', amount: '1', unit: 'pieza', category: 'Verduras' },
+    { label: 'Pimiento', amount: '1', unit: 'pieza', category: 'Verduras' },
+    { label: 'Cebolla', amount: '1', unit: 'pieza', category: 'Verduras' },
+    { label: 'Champinon', amount: '100', unit: 'g', category: 'Verduras' },
+    { label: 'Coliflor', amount: '150', unit: 'g', category: 'Verduras' },
+    { label: 'Calabaza', amount: '150', unit: 'g', category: 'Verduras' },
+    { label: 'Espinaca', amount: '100', unit: 'g', category: 'Verduras' },
+    { label: 'Nopal', amount: '100', unit: 'g', category: 'Verduras' },
+    { label: 'Manzana', amount: '1', unit: 'pieza', category: 'Frutas' },
+    { label: 'Platano', amount: '1', unit: 'pieza', category: 'Frutas' },
+    { label: 'Naranja', amount: '1', unit: 'pieza', category: 'Frutas' },
+    { label: 'Fresa', amount: '100', unit: 'g', category: 'Frutas' },
+    { label: 'Mango', amount: '1', unit: 'pieza', category: 'Frutas' },
+    { label: 'Arandano', amount: '50', unit: 'g', category: 'Frutas' },
+    { label: 'Pera', amount: '1', unit: 'pieza', category: 'Frutas' },
+    { label: 'Sandia', amount: '200', unit: 'g', category: 'Frutas' },
+    { label: 'Kiwi', amount: '1', unit: 'pieza', category: 'Frutas' },
+    { label: 'Pollo', amount: '150', unit: 'g', category: 'Proteinas' },
+    { label: 'Pescado', amount: '150', unit: 'g', category: 'Proteinas' },
+    { label: 'Salmon', amount: '150', unit: 'g', category: 'Proteinas' },
+    { label: 'Atun', amount: '100', unit: 'g', category: 'Proteinas' },
+    { label: 'Carne de res', amount: '150', unit: 'g', category: 'Proteinas' },
+    { label: 'Pavo', amount: '150', unit: 'g', category: 'Proteinas' },
+    { label: 'Huevo', amount: '1', unit: 'pieza', category: 'Proteinas' },
+    { label: 'Tofu', amount: '100', unit: 'g', category: 'Proteinas' },
+    { label: 'Avena', amount: '50', unit: 'g', category: 'Cereales' },
+    { label: 'Arroz', amount: '100', unit: 'g', category: 'Cereales' },
+    { label: 'Quinoa', amount: '80', unit: 'g', category: 'Cereales' },
+    { label: 'Pan integral', amount: '2', unit: 'rebanadas', category: 'Cereales' },
+    { label: 'Tortilla', amount: '2', unit: 'piezas', category: 'Cereales' },
+    { label: 'Pasta integral', amount: '100', unit: 'g', category: 'Cereales' },
+    { label: 'Leche', amount: '250', unit: 'ml', category: 'Lacteos' },
+    { label: 'Yogur natural', amount: '150', unit: 'g', category: 'Lacteos' },
+    { label: 'Queso cottage', amount: '100', unit: 'g', category: 'Lacteos' },
+    { label: 'Queso panela', amount: '80', unit: 'g', category: 'Lacteos' },
+    { label: 'Frijol negro', amount: '100', unit: 'g', category: 'Legumbres' },
+    { label: 'Garbanzo', amount: '100', unit: 'g', category: 'Legumbres' },
+    { label: 'Lenteja', amount: '100', unit: 'g', category: 'Legumbres' },
+    { label: 'Haba', amount: '100', unit: 'g', category: 'Legumbres' },
+    { label: 'Aceite de oliva', amount: '1', unit: 'cda', category: 'Condimentos' },
+    { label: 'Limón', amount: '1', unit: 'pieza', category: 'Condimentos' },
+    { label: 'Ajo', amount: '1', unit: 'diente', category: 'Condimentos' },
+    { label: 'Jengibre', amount: '10', unit: 'g', category: 'Condimentos' },
+    { label: 'Canela', amount: '1', unit: 'cdita', category: 'Condimentos' }
   ];
   private photoMap: Record<string, string> = {
     lechuga: 'https://images.unsplash.com/photo-1622205313162-be1d5712a43f',

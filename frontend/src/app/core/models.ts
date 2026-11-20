@@ -26,6 +26,7 @@ export interface Ingredient {
   label: string;
   amount: string;
   unit: string;
+  category?: string;
 }
 
 export interface Tag {
