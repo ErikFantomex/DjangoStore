@@ -21,7 +21,71 @@
       </div>
       <div class="field"><label>Instrucciones</label><textarea formControlName="instructions"></textarea></div>
       <div class="field"><label>Etiquetas separadas por comas</label><input formControlName="tagsText" placeholder="Ligera, Vegano"></div>
-      <div class="field"><label>Ingredientes</label><textarea formControlName="ingredientsText" placeholder="Lechuga|100|g&#10;Tomate|2|unidades"></textarea></div>
+      <div class="ingredient-builder">
+        <div class="ingredient-catalog">
+          <div class="ingredient-builder-header">
+            <div>
+              <span class="eyebrow">Biblioteca</span>
+              <h3>Arrastra alimentos</h3>
+            </div>
+          </div>
+          <div class="catalog-grid">
+            @for (ingredient of catalogIngredients; track ingredient.label) {
+              <button
+                type="button"
+                class="ingredient-card"
+                cdkDrag
+                [cdkDragData]="ingredient"
+                (click)="addIngredient(ingredient)"
+                [attr.aria-label]="'Agregar ' + ingredient.label">
+                <img [src]="photoUrl(ingredient.label)" [alt]="ingredient.label" draggable="false">
+                <span>{{ ingredient.label }}</span>
+                <small>{{ ingredient.amount }} {{ ingredient.unit }}</small>
+              </button>
+            }
+          </div>
+        </div>
+
+        <div
+          class="recipe-dropzone"
+          cdkDropList
+          [cdkDropListData]="selectedIngredients"
+          (cdkDropListDropped)="dropIngredient($event)">
+          <div class="ingredient-builder-header">
+            <div>
+              <span class="eyebrow">En la receta</span>
+              <h3>Ingredientes seleccionados</h3>
+            </div>
+            <span class="drop-count">{{ selectedIngredients.length }}</span>
+          </div>
+
+          @if (selectedIngredients.length) {
+            <div class="selected-list">
+              @for (ingredient of selectedIngredients; track ingredient.label + $index; let i = $index) {
+                <article class="selected-ingredient" cdkDrag [cdkDragData]="ingredient">
+                  <span class="drag-handle" aria-label="Arrastrar para reordenar">⠿</span>
+                  <img [src]="photoUrl(ingredient.label)" [alt]="ingredient.label" draggable="false">
+                  <strong>{{ ingredient.label }}</strong>
+                  <input
+                    aria-label="Cantidad"
+                    [value]="ingredient.amount"
+                    (input)="updateIngredient(i, 'amount', $any($event.target).value)">
+                  <input
+                    aria-label="Unidad"
+                    [value]="ingredient.unit"
+                    (input)="updateIngredient(i, 'unit', $any($event.target).value)">
+                  <button type="button" class="remove-ingredient" (click)="removeSelectedIngredient(i)" aria-label="Quitar ingrediente">×</button>
+                </article>
+              }
+            </div>
+          } @else {
+            <div class="drop-placeholder">
+              <span>＋</span>
+              <p>Arrastra aqui los ingredientes</p>
+            </div>
+          }
+        </div>
+      </div>
       <div class="field"><label>Informacion nutricional (JSON)</label><textarea formControlName="nutritionalInfo"></textarea></div>
       <button class="btn" type="submit" [disabled]="form.invalid">{{ editingId ? 'Guardar cambios' : 'Crear receta' }}</button>
     </form>
@@ -32,6 +96,15 @@
           <div>
             <h2>{{ recipe.title }}</h2>
             <p class="muted">{{ recipe.time_minutes }} min · nivel {{ recipe.price_level }}</p>
+            @if (recipe.ingredients?.length) {
+              <div class="recipe-ingredient-preview">
+                @for (ingredient of recipe.ingredients || []; track ingredient.label) {
+                  <span title="{{ ingredient.label }}: {{ ingredient.amount }} {{ ingredient.unit }}">
+                    <img [src]="photoUrl(ingredient.label)" [alt]="ingredient.label" draggable="false">
+                  </span>
+                }
+              </div>
+            }
             @for (tag of recipe.tags || []; track tag.id || tag.name) { <span class="tag">{{ tag.name }}</span> }
           </div>
           <div class="actions">

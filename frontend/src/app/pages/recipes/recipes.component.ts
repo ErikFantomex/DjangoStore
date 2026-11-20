@@ -1,11 +1,12 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ApiService } from '../../core/api.service';
 import { Ingredient, Recipe, Tag } from '../../core/models';
 
 @Component({
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DragDropModule],
   templateUrl: './recipes.component.html',
   styleUrl: './recipes.component.scss'
 })
@@ -15,8 +16,33 @@ export class RecipesComponent implements OnInit {
   recipes: Recipe[] = [];
   tags: Tag[] = [];
   ingredients: Ingredient[] = [];
+  selectedIngredients: Ingredient[] = [];
   editingId: number | null = null;
   error = '';
+  catalogIngredients: Ingredient[] = [
+    { label: 'Lechuga', amount: '100', unit: 'g' },
+    { label: 'Tomate', amount: '1', unit: 'pieza' },
+    { label: 'Aguacate', amount: '1', unit: 'pieza' },
+    { label: 'Pollo', amount: '150', unit: 'g' },
+    { label: 'Avena', amount: '50', unit: 'g' },
+    { label: 'Arroz', amount: '100', unit: 'g' },
+    { label: 'Huevo', amount: '1', unit: 'pieza' },
+    { label: 'Platano', amount: '1', unit: 'pieza' },
+    { label: 'Manzana', amount: '1', unit: 'pieza' },
+    { label: 'Brocoli', amount: '100', unit: 'g' }
+  ];
+  private photoMap: Record<string, string> = {
+    lechuga: 'https://images.unsplash.com/photo-1622205313162-be1d5712a43f',
+    tomate: 'https://images.unsplash.com/photo-1546094096-0df4bcaaa337',
+    aguacate: 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578',
+    pollo: 'https://images.unsplash.com/photo-1532550907401-a500c9a57435',
+    avena: 'https://images.unsplash.com/photo-1517673400267-0251440c45dc',
+    arroz: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6',
+    huevo: 'https://images.unsplash.com/photo-1587486913049-53fc88980cfc',
+    platano: 'https://images.unsplash.com/photo-1603833665858-e61d17a86224',
+    manzana: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6',
+    brocoli: 'https://images.unsplash.com/photo-1459411621453-7b03977f4bfc'
+  };
   form = this.fb.nonNullable.group({
     title: ['', Validators.required],
     meal_id: ['', Validators.required],
@@ -36,11 +62,71 @@ export class RecipesComponent implements OnInit {
   load(): void {
     this.api.recipes().subscribe(items => this.recipes = items);
     this.api.tags().subscribe(items => this.tags = items);
-    this.api.ingredients().subscribe(items => this.ingredients = items);
+    this.api.ingredients().subscribe(items => {
+      this.ingredients = items;
+      const knownLabels = new Set(this.catalogIngredients.map(item => item.label.toLowerCase()));
+      for (const ingredient of items) {
+        if (!knownLabels.has(ingredient.label.toLowerCase())) {
+          this.catalogIngredients = [...this.catalogIngredients, ingredient];
+          knownLabels.add(ingredient.label.toLowerCase());
+        }
+      }
+    });
+  }
+
+  photoUrl(label: string): string {
+    const photo = this.photoMap[label.trim().toLowerCase()];
+    return `${photo || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c'}?auto=format&fit=crop&w=320&h=220&q=80`;
+  }
+
+  addIngredient(ingredient: Ingredient): void {
+    const alreadySelected = this.selectedIngredients.some(
+      item => item.label.toLowerCase() === ingredient.label.toLowerCase()
+    );
+    if (!alreadySelected) {
+      this.selectedIngredients = [...this.selectedIngredients, { ...ingredient }];
+      this.syncIngredientsText();
+    }
+  }
+
+  dropIngredient(event: CdkDragDrop<Ingredient[]>): void {
+    const ingredient = event.item.data as Ingredient;
+    if (event.previousIndex === event.currentIndex && event.previousContainer === event.container) return;
+    if (!event.container.data?.length || event.previousContainer !== event.container) {
+      this.addIngredient(ingredient);
+    } else {
+      moveItemInArray(this.selectedIngredients, event.previousIndex, event.currentIndex);
+      this.syncIngredientsText();
+    }
+  }
+
+  reorderIngredient(event: CdkDragDrop<Ingredient[]>): void {
+    moveItemInArray(this.selectedIngredients, event.previousIndex, event.currentIndex);
+    this.syncIngredientsText();
+  }
+
+  removeSelectedIngredient(index: number): void {
+    this.selectedIngredients.splice(index, 1);
+    this.selectedIngredients = [...this.selectedIngredients];
+    this.syncIngredientsText();
+  }
+
+  updateIngredient(index: number, field: 'amount' | 'unit', value: string): void {
+    this.selectedIngredients[index][field] = value;
+    this.syncIngredientsText();
+  }
+
+  syncIngredientsText(): void {
+    this.form.controls.ingredientsText.setValue(
+      this.selectedIngredients
+        .map(item => `${item.label}|${item.amount}|${item.unit}`)
+        .join('\n')
+    );
   }
 
   edit(recipe: Recipe): void {
     this.editingId = recipe.id ?? null;
+    this.selectedIngredients = (recipe.ingredients || []).map(item => ({ ...item }));
     this.form.patchValue({
       title: recipe.title,
       meal_id: recipe.meal_id,
@@ -58,6 +144,7 @@ export class RecipesComponent implements OnInit {
 
   reset(): void {
     this.editingId = null;
+    this.selectedIngredients = [];
     this.error = '';
     this.form.reset({
       title: '', meal_id: '', description: '', image_url: '',
