@@ -1,4 +1,4 @@
-# 🍽️ Eatery
+# 🍽️ Portal de Gestión Nutricional
 
 Web App para Nutriólogos | Django
 
@@ -10,7 +10,7 @@ Web App para Nutriólogos | Django
 
 ## 📖 Descripción
 
-**Eatery** es una aplicación web en Django que facilita a los nutriólogos la gestión de:
+**Portal de Gestión Nutricional** es una aplicación web en Django que facilita a los nutriólogos la gestión de:
 
 - ✅ **Planes de comida**: Crea, edita y guarda planes detallados para pacientes.  
 - ✅ **Recetas**: Añade y modifica recetas con ingredientes, pasos de preparación y valores nutricionales.  
