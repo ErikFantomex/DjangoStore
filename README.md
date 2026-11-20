@@ -136,6 +136,36 @@ Una vez levantada la aplicación, accede a:
 
 ---
 
+## 🎬 Demostracion visual del proyecto MVP
+
+La siguiente demostracion muestra el flujo principal: resumen del sistema,
+constructor visual de recetas y adaptacion a dispositivos moviles.
+
+![Demostracion general del proyecto](docs/images/project-demo.gif)
+
+### Dashboard y resumen
+
+Vista general de las recetas, planes y comidas disponibles para el usuario.
+
+![Dashboard del proyecto](docs/images/dashboard.png)
+
+### Composicion visual de recetas
+
+Los ingredientes se presentan con imagen, cantidad y unidad. Pueden
+seleccionarse por toque o arrastrarse al area de la receta. El sistema calcula
+sugerencias segun los ingredientes elegidos.
+
+![Constructor visual de recetas](docs/images/recipe-builder.png)
+
+### Experiencia responsive
+
+La interfaz reorganiza el catalogo, el formulario y las listas para conservar
+una experiencia util en tablets y celulares.
+
+![Vista responsive en movil](docs/images/responsive-mobile.png)
+
+---
+
 ## 📄 Licencia
 
 Este proyecto está bajo la licencia **MIT**. Revisa el archivo [LICENSE](LICENSE) para más detalles.
