@@ -32,7 +32,6 @@ export class RecipesComponent implements OnInit {
     { label: 'Tomate', amount: '1', unit: 'pieza', category: 'Verduras' },
     { label: 'Aguacate', amount: '1', unit: 'pieza', category: 'Frutas' },
     { label: 'Brocoli', amount: '100', unit: 'g', category: 'Verduras' },
-    { label: 'Espinaca', amount: '100', unit: 'g', category: 'Verduras' },
     { label: 'Pepino', amount: '1', unit: 'pieza', category: 'Verduras' },
     { label: 'Zanahoria', amount: '1', unit: 'pieza', category: 'Verduras' },
     { label: 'Pimiento', amount: '1', unit: 'pieza', category: 'Verduras' },
@@ -89,7 +88,46 @@ export class RecipesComponent implements OnInit {
     huevo: 'https://images.unsplash.com/photo-1587486913049-53fc88980cfc',
     platano: 'https://images.unsplash.com/photo-1603833665858-e61d17a86224',
     manzana: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6',
-    brocoli: 'https://images.unsplash.com/photo-1459411621453-7b03977f4bfc'
+    brocoli: 'https://images.unsplash.com/photo-1459411621453-7b03977f4bfc',
+    espinaca: 'https://images.unsplash.com/photo-1576045057995-568f588f82fb',
+    pepino: 'https://images.unsplash.com/photo-1449300079323-02e209d9d3a6',
+    zanahoria: 'https://images.unsplash.com/photo-1447175008436-054170c2e979',
+    pimiento: 'https://images.unsplash.com/photo-1563565375-f3fdfdbefa7e',
+    cebolla: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655',
+    champinon: 'https://images.unsplash.com/photo-1504545102780-26774c1bb073',
+    coliflor: 'https://images.unsplash.com/photo-1568584711075-3d021a7c3ca3',
+    calabaza: 'https://images.unsplash.com/photo-1506915925760-8a8d1a4bca99',
+    nopal: 'https://images.unsplash.com/photo-1566970653468-8eb9bd7b3ea9',
+    naranja: 'https://images.unsplash.com/photo-1547514701-42782101795e',
+    fresa: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6',
+    mango: 'https://images.unsplash.com/photo-1553279768-865429fa0078',
+    arandano: 'https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea',
+    pera: 'https://images.unsplash.com/photo-1567085184-c0e5f0eb0df2',
+    sandia: 'https://images.unsplash.com/photo-1563114773-84221bd62daa',
+    kiwi: 'https://images.unsplash.com/photo-1585059895524-72359e06133a',
+    pescado: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2',
+    salmon: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288',
+    atun: 'https://images.unsplash.com/photo-1574781330855-d0db8cc6a79c',
+    'carne de res': 'https://images.unsplash.com/photo-1588347818036-558601350947',
+    pavo: 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b',
+    tofu: 'https://images.unsplash.com/photo-1564834724105-918b73d1b9e0',
+    quinoa: 'https://images.unsplash.com/photo-1586201375761-83865001e31c',
+    'pan integral': 'https://images.unsplash.com/photo-1509440159596-0249088772ff',
+    tortilla: 'https://images.unsplash.com/photo-1624392141096-7a917049c6ce',
+    'pasta integral': 'https://images.unsplash.com/photo-1551183053-bf91a1d81141',
+    leche: 'https://images.unsplash.com/photo-1550583724-b2692b85b150',
+    'yogur natural': 'https://images.unsplash.com/photo-1571212515416-fca99f4de07c',
+    'queso cottage': 'https://images.unsplash.com/photo-1628088062854-d1870b4553da',
+    'queso panela': 'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d',
+    'frijol negro': 'https://images.unsplash.com/photo-1599909543561-1e5e3eb4a29c',
+    garbanzo: 'https://images.unsplash.com/photo-1591758109093-5c3b9cf7d7f2',
+    lenteja: 'https://images.unsplash.com/photo-1585996459328-8f9ca7aee4d9',
+    haba: 'https://images.unsplash.com/photo-1620260528569-f3eb23c2d6fc',
+    'aceite de oliva': 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5',
+    limón: 'https://images.unsplash.com/photo-1590502593747-42a996133562',
+    ajo: 'https://images.unsplash.com/photo-1615477550927-6ec1d7e1e9cf',
+    jengibre: 'https://images.unsplash.com/photo-1605502891375-7db4b0baf06b',
+    canela: 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af'
   };
   form = this.fb.nonNullable.group({
     title: ['', Validators.required],
@@ -106,6 +144,19 @@ export class RecipesComponent implements OnInit {
   });
 
   ngOnInit(): void { this.load(); }
+
+  visibleCatalogIngredients(): Ingredient[] {
+    const query = this.catalogSearch.trim().toLowerCase();
+    return this.catalogIngredients.filter(ingredient => {
+      const matchesCategory =
+        this.catalogCategory === 'Todos'
+        || ingredient.category === this.catalogCategory;
+      const matchesSearch =
+        !query
+        || ingredient.label.toLowerCase().includes(query);
+      return matchesCategory && matchesSearch;
+    });
+  }
 
   load(): void {
     this.api.recipes().subscribe(items => this.recipes = items);

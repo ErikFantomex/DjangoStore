@@ -33,6 +33,33 @@
   overflow-y:auto;
   padding-right:.15rem;
 }
+.catalog-controls { display:grid; gap:.5rem; margin-bottom:.55rem; }
+.catalog-controls input {
+  min-height:42px;
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:white;
+  padding:.65rem .75rem;
+}
+.category-chips { display:flex; gap:.35rem; overflow-x:auto; padding-bottom:.2rem; }
+.category-chips button {
+  flex:0 0 auto;
+  min-height:34px;
+  border:1px solid var(--border);
+  border-radius:999px;
+  background:white;
+  color:var(--muted);
+  padding:.45rem .65rem;
+  cursor:pointer;
+  font-weight:800;
+  font-size:.78rem;
+}
+.category-chips button.selected {
+  background:var(--primary);
+  color:white;
+  border-color:var(--primary);
+}
 .ingredient-card {
   border:1px solid var(--border);
   border-radius:12px;

@@ -29,8 +29,26 @@
               <h3>Arrastra alimentos</h3>
             </div>
           </div>
+          <div class="catalog-controls">
+            <input
+              type="search"
+              aria-label="Buscar ingrediente"
+              placeholder="Buscar ingrediente..."
+              [value]="catalogSearch"
+              (input)="catalogSearch = $any($event.target).value">
+            <div class="category-chips" aria-label="Categorias de ingredientes">
+              @for (category of catalogCategories; track category) {
+                <button
+                  type="button"
+                  [class.selected]="catalogCategory === category"
+                  (click)="catalogCategory = category">
+                  {{ category }}
+                </button>
+              }
+            </div>
+          </div>
           <div class="catalog-grid">
-            @for (ingredient of catalogIngredients; track ingredient.label) {
+            @for (ingredient of visibleCatalogIngredients(); track ingredient.label) {
               <button
                 type="button"
                 class="ingredient-card"
