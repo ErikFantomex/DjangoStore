@@ -1,6 +1,6 @@
-# Portal Nutricional
+# MesaViva
 
-¿Qué puedes cocinar con lo que ya tienes en casa? ¿Cómo se comparan dos alimentos envasados? El Portal Nutricional reúne recetas, un catálogo con fotos y herramientas para organizar las comidas de la semana.
+¿Qué puedes cocinar con lo que ya tienes en casa? ¿Cómo se comparan dos alimentos envasados? MesaViva reúne recetas, un catálogo con fotos y herramientas para organizar las comidas de la semana.
 
 ## Qué puedes hacer
 

@@ -1,27 +1,39 @@
-<div class="page">
-  <div class="page-header">
+<div class="page home">
+  <header class="page-header home-header">
     <div>
       <h1>{{ name ? 'Hola, ' + name : 'Te damos la bienvenida' }}</h1>
-      <p class="muted">Encuentra ideas para cocinar y compara los alimentos que tienes a mano.</p>
+      <p class="muted">Encuentra ideas para cocinar, compara alimentos y prepara tu menú semanal.</p>
     </div>
+  </header>
+
+  <div class="home-grid">
+    <section class="card actions-panel" aria-labelledby="next-action">
+      <h2 id="next-action">¿Qué quieres hacer hoy?</h2>
+      <div class="action-list">
+        <a class="action recipe-action" routerLink="/recetas">
+          <span><strong>Buscar ideas para cocinar</strong><small>Encuentra recetas con lo que tienes en casa.</small></span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <a class="action food-action" routerLink="/datos-nutricionales">
+          <span><strong>Explorar alimentos</strong><small>Compara la información de los productos que eliges.</small></span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <a class="action plan-action" routerLink="/planes">
+          <span><strong>Planear mi semana</strong><small>Organiza tus comidas y objetivos.</small></span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <a class="action meal-action" routerLink="/comidas">
+          <span><strong>Organizar mis comidas</strong><small>Guarda opciones para añadir a tus planes.</small></span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="card library" aria-labelledby="my-library">
+      <h2 id="my-library">Mis registros</h2>
+      <a class="stat" routerLink="/recetas"><span>Recetas guardadas</span><strong>{{ recipes }}</strong></a>
+      <a class="stat" routerLink="/planes"><span>Planes guardados</span><strong>{{ plans }}</strong></a>
+      <a class="stat" routerLink="/comidas"><span>Comidas guardadas</span><strong>{{ meals }}</strong></a>
+    </section>
   </div>
-
-  <section class="grid three stats">
-    <a class="card stat" routerLink="/recetas"><span>Recetas</span><strong>{{ recipes }}</strong></a>
-    <a class="card stat" routerLink="/planes"><span>Planes activos</span><strong>{{ plans }}</strong></a>
-    <a class="card stat" routerLink="/comidas"><span>Comidas</span><strong>{{ meals }}</strong></a>
-  </section>
-
-  <section class="grid two quick-actions">
-    <article class="card">
-      <h2>¿Qué tienes en casa?</h2>
-      <p class="muted">Elige tus ingredientes y descubre qué puedes preparar con ellos.</p>
-      <a class="btn" routerLink="/recetas">Buscar ideas para cocinar</a>
-    </article>
-    <article class="card">
-      <h2>Compara alimentos</h2>
-      <p class="muted">Busca productos por nombre y compara sus datos nutricionales.</p>
-      <a class="btn" routerLink="/datos-nutricionales">Explorar alimentos</a>
-    </article>
-  </section>
 </div>

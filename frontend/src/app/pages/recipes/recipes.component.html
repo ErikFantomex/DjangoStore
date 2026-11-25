@@ -1,4 +1,4 @@
-<div class="page">
+<div class="page recipe-page">
   <div class="page-header">
     <div><h1>¿Qué podemos cocinar?</h1><p class="muted">Elige lo que tienes en casa y encuentra ideas para aprovecharlo.</p></div>
     @if (!editorOpen) { <button class="btn secondary" type="button" (click)="openEditor()">Escribir mi receta</button> }
@@ -15,12 +15,14 @@
           </div>
           <p class="ingredient-hint">Arrastra un ingrediente o pulsa su tarjeta para agregarlo.</p>
           <div class="catalog-controls">
-            <input
-              type="search"
-              aria-label="Buscar ingrediente"
-              placeholder="Buscar ingrediente..."
-              [value]="catalogSearch"
-              (input)="catalogSearch = $any($event.target).value">
+            <div class="field catalog-search">
+              <input
+                type="search"
+                aria-label="Buscar ingrediente"
+                placeholder="Buscar ingrediente…"
+                [value]="catalogSearch"
+                (input)="catalogSearch = $any($event.target).value">
+            </div>
             <div class="category-chips" aria-label="Categorías de ingredientes">
               @for (category of catalogCategories; track category) {
                 <button
@@ -112,7 +114,7 @@
                   <span class="match-score">{{ recipe.time_minutes }} min</span>
                 </div>
                 <div class="recommendation-copy">
-                  <h4>{{ recipe.title }}</h4>
+                  <h3>{{ recipe.title }}</h3>
                   @if (recipe.matched_ingredients?.length) {
                     <p><strong>Tienes</strong> {{ recipe.matched_ingredients?.join(', ') }}</p>
                     @if (recipe.missing_ingredients?.length) {
@@ -178,12 +180,12 @@
       }
     </section>
 
-    <section class="recipe-list">
+    <section class="card recipe-form recipe-list">
       <h2>Mis recetas</h2>
       @for (recipe of recipes; track recipe.id) {
-        <article class="card recipe-card">
+        <article class="recipe-card">
           <div>
-            <h2>{{ recipe.title }}</h2>
+            <h3>{{ recipe.title }}</h3>
             <p class="muted">{{ recipe.time_minutes }} min</p>
             @if (recipe.ingredients?.length) {
               <div class="recipe-ingredient-preview">
@@ -202,7 +204,7 @@
           </div>
         </article>
       } @empty {
-        <article class="card empty">Todavia no hay recetas.</article>
+        <p class="empty">Aquí aparecerán tus recetas guardadas.</p>
       }
     </section>
   </div>

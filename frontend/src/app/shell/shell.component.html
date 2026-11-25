@@ -1,21 +1,22 @@
 <div class="app-shell">
-  <aside class="sidebar">
-    <a class="brand" routerLink="/">Portal nutricional</a>
-    <nav aria-label="Navegación principal">
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
-      <a routerLink="/recetas" routerLinkActive="active">Recetas</a>
-      <a routerLink="/planes" routerLinkActive="active">Planes</a>
-      <a routerLink="/comidas" routerLinkActive="active">Comidas</a>
-      <a routerLink="/datos-nutricionales" routerLinkActive="active">Alimentos</a>
-      <a routerLink="/perfil" routerLinkActive="active">Perfil</a>
-    </nav>
-  </aside>
-  <main>
-    <header class="topbar">
-      <button type="button" class="btn secondary" (click)="auth.logout()">Cerrar sesión</button>
-    </header>
-    <section class="content">
-      <router-outlet />
-    </section>
+  <header class="topbar">
+    <div class="header-inner">
+      <a class="brand" routerLink="/" aria-label="MesaViva, inicio">
+        <img class="brand-mark" src="/mesaviva.png" alt="">
+        MesaViva
+      </a>
+      <nav aria-label="Navegación principal">
+        <a routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
+        <a routerLink="/recetas" routerLinkActive="active" ariaCurrentWhenActive="page">Recetas</a>
+        <a routerLink="/planes" routerLinkActive="active" ariaCurrentWhenActive="page">Planes</a>
+        <a routerLink="/comidas" routerLinkActive="active" ariaCurrentWhenActive="page">Comidas</a>
+        <a routerLink="/datos-nutricionales" routerLinkActive="active" ariaCurrentWhenActive="page">Alimentos</a>
+        <a routerLink="/perfil" routerLinkActive="active" ariaCurrentWhenActive="page">Perfil</a>
+      </nav>
+      <button type="button" class="session btn secondary" (click)="auth.logout()">Cerrar sesión</button>
+    </div>
+  </header>
+  <main class="content">
+    <router-outlet />
   </main>
 </div>

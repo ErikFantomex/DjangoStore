@@ -7,8 +7,10 @@
   </div>
 
   <section class="card import-card" aria-labelledby="import-title">
-    <h2 id="import-title">Catálogo de alimentos</h2>
-    <p class="muted catalog-credit">Datos y fotos de <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts</a>.</p>
+    <div class="catalog-heading">
+      <h2 id="import-title">Catálogo de alimentos</h2>
+      <p class="muted catalog-credit">Datos y fotos de <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts</a>.</p>
+    </div>
     <form (ngSubmit)="importProduct()" class="import-form">
       <div class="field product-search">
         <label for="product-search">Buscar en el catálogo</label>

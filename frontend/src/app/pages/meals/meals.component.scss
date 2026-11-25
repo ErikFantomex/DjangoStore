@@ -1,5 +1,5 @@
-.meals-layout { grid-template-columns:minmax(260px,.55fr) minmax(320px,1fr); align-items:start; }
-.meals-form { padding:1.25rem; }
+.meals-layout { grid-template-columns:minmax(0,.7fr) minmax(0,1fr); align-items:start; }
+.meals-form { padding:clamp(1rem, 4vw, 1.65rem); }
 .meals-form h2 { margin-top:0; }
-.form-actions { display:flex; gap:.5rem; }
-@media (max-width:760px) { .meals-layout { grid-template-columns:1fr; } td .btn { margin:.15rem; } }
+.form-actions { display:flex; flex-wrap:wrap; gap:.5rem; }
+@media (max-width:760px) { .meals-layout { grid-template-columns:minmax(0,1fr); } td .btn { margin:.15rem; } }

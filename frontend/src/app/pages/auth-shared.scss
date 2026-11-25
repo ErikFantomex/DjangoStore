@@ -1,16 +1,17 @@
-.auth-page {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 1rem;
-  background:
-    radial-gradient(circle at 12% 10%, rgba(231, 165, 47, .16), transparent 26rem),
-    linear-gradient(135deg, #edf4f0, #f8faf8);
-}
-
-.auth-card { width: min(440px, 100%); padding: clamp(1.25rem, 5vw, 2.25rem); }
-.auth-card h1 { margin: .15rem 0 .45rem; font-size: 2rem; }
+.auth-page { min-height: 100dvh; display: grid; place-items: center; padding: clamp(.9rem, 4vw, 2rem); }
+.auth-sheet { width: min(100%, 960px); min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .92fr); background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.auth-intro { padding: clamp(1.4rem, 5vw, 3.5rem); background: var(--soft); display: flex; flex-direction: column; justify-content: space-between; gap: clamp(2rem, 8vh, 5.5rem); }
+.auth-intro h2 { margin: 0 0 .8rem; max-width: 12ch; font-size: clamp(2rem, 4.3vw, 3.2rem); font-weight: 650; line-height: 1.07; letter-spacing: -.055em; }
+.auth-intro p { color: var(--muted); line-height: 1.55; margin: 0; }
+.auth-card { min-width: 0; align-self: center; padding: clamp(1.4rem, 4.3vw, 3rem); }
+.auth-card h1 { margin: 0 0 .65rem; font-size: clamp(1.6rem, 3vw, 2.05rem); font-weight: 650; letter-spacing: -.035em; }
+.auth-card > .muted { margin: 0 0 1.55rem; line-height: 1.45; }
 .auth-card .btn { width: 100%; }
-.eyebrow { margin: 0; color: var(--accent); text-transform: uppercase; letter-spacing: .12em; font-size: .75rem; font-weight: 900; }
-.auth-link { text-align: center; margin: 1rem 0 0; }
-.auth-link a { color: var(--primary); font-weight: 800; }
+.auth-link { text-align: center; margin: 1rem 0 0; font-size: .9rem; }
+.auth-link a { font-weight: 750; }
+@media (max-width: 680px) {
+  .auth-sheet { max-width: 460px; grid-template-columns: minmax(0, 1fr); }
+  .auth-intro { gap: .8rem; }
+  .auth-intro h2 { max-width: none; font-size: 1.35rem; margin-bottom: .35rem; }
+  .auth-intro p { font-size: .88rem; }
+}

@@ -1,67 +1,148 @@
 <div class="page">
-  <div class="page-header">
-    <h1>Planes de alimentación</h1>
-    @if (editingId) { <button class="btn secondary" type="button" (click)="reset()">Cancelar edición</button> }
-  </div>
-  <div class="grid plan-layout">
-    <form class="card plan-form" [formGroup]="form" (ngSubmit)="submit()">
-      @if (error) { <p class="error">{{ error }}</p> }
-      <div class="grid two">
-        <div class="field"><label for="plan-person">¿Para quién es el plan?</label><input id="plan-person" formControlName="client_name"></div>
-        <div class="field"><label for="plan-type">Nombre del plan</label><input id="plan-type" formControlName="plan_type" placeholder="Por ejemplo, comidas de la semana"></div>
-        <div class="field"><label for="plan-weight">Peso (kg)</label><input id="plan-weight" type="number" formControlName="client_weight"></div>
-        <div class="field"><label for="plan-height">Estatura (cm)</label><input id="plan-height" type="number" formControlName="client_height"></div>
-        <div class="field"><label for="prep-day">Día para preparar las comidas</label><select id="prep-day" formControlName="prep_day">@for (day of days; track day; let i = $index) { <option [value]="day">{{ dayNames[i] }}</option> }</select></div>
-        <div class="field"><label for="plan-length">Duración (semanas)</label><input id="plan-length" type="number" min="1" formControlName="plan_length_in_weeks"></div>
-        <div class="field"><label for="plan-week">Semana actual</label><input id="plan-week" type="number" min="1" formControlName="current_week"></div>
-      </div>
-      <div class="field">
-        <strong>Días de seguimiento</strong>
-        <div class="day-picker">
-          @for (day of days; track day; let i = $index) {
-            <button type="button" [class.selected]="form.controls.tracking_days.value.includes(day)" [attr.aria-pressed]="form.controls.tracking_days.value.includes(day)" [attr.aria-label]="dayNames[i]" (click)="toggleDay(day)">{{ dayNames[i].slice(0, 3) }}</button>
-          }
+  <header class="page-header">
+    <div>
+      <h1>Planes de alimentación</h1>
+      <p class="muted">Organiza las comidas y los objetivos de cada semana.</p>
+    </div>
+    @if (editingId) {
+      <button class="btn secondary" type="button" (click)="reset()">Cancelar edición</button>
+    }
+  </header>
+
+  <div class="plan-layout">
+    <form class="card plan-form" [formGroup]="form" (ngSubmit)="submit()" aria-labelledby="plan-form-title">
+      <h2 id="plan-form-title">{{ editingId ? 'Editar plan' : 'Nuevo plan' }}</h2>
+      @if (error) {
+        <p class="error plan-error" role="alert">{{ error }}</p>
+      }
+
+      <section class="plan-section" aria-labelledby="plan-details">
+        <h3 id="plan-details">Datos del plan</h3>
+        <div class="plan-fields">
+          <div class="field">
+            <label for="plan-person">¿Para quién es el plan?</label>
+            <input id="plan-person" formControlName="client_name">
+          </div>
+          <div class="field">
+            <label for="plan-type">Nombre del plan</label>
+            <input id="plan-type" formControlName="plan_type" placeholder="Por ejemplo, comidas de la semana">
+          </div>
+          <div class="field">
+            <label for="plan-weight">Peso (kg)</label>
+            <input id="plan-weight" type="number" formControlName="client_weight">
+          </div>
+          <div class="field">
+            <label for="plan-height">Estatura (cm)</label>
+            <input id="plan-height" type="number" formControlName="client_height">
+          </div>
         </div>
-      </div>
-      <details class="plan-section">
+      </section>
+
+      <section class="plan-section" aria-labelledby="plan-schedule">
+        <h3 id="plan-schedule">Calendario y seguimiento</h3>
+        <div class="plan-fields schedule-fields">
+          <div class="field">
+            <label for="plan-length">Duración (semanas)</label>
+            <input id="plan-length" type="number" min="1" formControlName="plan_length_in_weeks">
+          </div>
+          <div class="field">
+            <label for="plan-week">Semana actual</label>
+            <input id="plan-week" type="number" min="1" formControlName="current_week">
+          </div>
+          <div class="field prep-day">
+            <label for="prep-day">Día para preparar las comidas</label>
+            <select id="prep-day" formControlName="prep_day">
+              @for (day of days; track day; let i = $index) {
+                <option [value]="day">{{ dayNames[i] }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <fieldset class="tracking-days">
+          <legend>Días de seguimiento</legend>
+          <div class="day-picker">
+            @for (day of days; track day; let i = $index) {
+              <button
+                type="button"
+                [class.selected]="form.controls.tracking_days.value.includes(day)"
+                [attr.aria-pressed]="form.controls.tracking_days.value.includes(day)"
+                [attr.aria-label]="dayNames[i]"
+                (click)="toggleDay(day)"
+              >{{ dayNames[i].slice(0, 3) }}</button>
+            }
+          </div>
+        </fieldset>
+      </section>
+
+      <details class="plan-section plan-disclosure">
         <summary>Objetivos diarios (opcional)</summary>
-        <div formGroupName="goals" class="grid two">
+        <div formGroupName="goals" class="plan-fields">
           @for (goal of goalFields; track goal.key) {
-            <div class="field"><label [for]="'plan-' + goal.key">{{ goal.label }}</label><input [id]="'plan-' + goal.key" type="number" min="0" step="any" [formControlName]="goal.key"></div>
+            <div class="field">
+              <label [for]="'plan-' + goal.key">{{ goal.label }}</label>
+              <input [id]="'plan-' + goal.key" type="number" min="0" step="any" [formControlName]="goal.key">
+            </div>
           }
         </div>
       </details>
-      <details class="plan-section">
+
+      <details class="plan-section plan-disclosure" open>
         <summary>Menú de la semana (opcional)</summary>
-        <div formGroupName="mealTimes" class="meal-choices">
-          @for (time of mealTimes; track time.key) {
-            <label><input type="checkbox" [formControlName]="time.key"> {{ time.label }}</label>
+        <fieldset class="meal-times" formGroupName="mealTimes">
+          <legend>Tiempos de comida</legend>
+          <div class="meal-choices">
+            @for (time of mealTimes; track time.key) {
+              <label><input type="checkbox" [formControlName]="time.key"> {{ time.label }}</label>
+            }
+          </div>
+        </fieldset>
+        @if (!meals.length) {
+          <p class="muted menu-note">Agrega opciones en <a routerLink="/comidas">Comidas</a> para elegirlas aquí.</p>
+        }
+        <div class="weekly-menu">
+          @for (day of dayNames; track day; let i = $index) {
+            @let count = menuFor(i).length;
+            @if (meals.length) {
+              <details class="menu-day">
+                <summary [attr.aria-label]="day + ' · ' + count + (count === 1 ? ' comida' : ' comidas')">
+                  <strong>{{ day }}</strong><span>{{ count }} {{ count === 1 ? 'comida' : 'comidas' }}</span>
+                </summary>
+                <div class="meal-choices menu-choices">
+                  @for (meal of meals; track meal.meal_id) {
+                    <label><input type="checkbox" [checked]="menuFor(i).includes(meal.meal_id)" (change)="toggleMeal(i, meal.meal_id)"> {{ meal.name }}</label>
+                  }
+                </div>
+              </details>
+            } @else {
+              <div class="menu-day menu-day-empty">
+                <strong>{{ day }}</strong><span>{{ count }} {{ count === 1 ? 'comida' : 'comidas' }}</span>
+              </div>
+            }
           }
         </div>
-        @if (meals.length) {
-          @for (day of dayNames; track day; let i = $index) {
-            <details class="menu-day">
-              <summary>{{ day }} · {{ menuFor(i).length }} {{ menuFor(i).length === 1 ? 'comida' : 'comidas' }}</summary>
-              <div class="meal-choices">
-                @for (meal of meals; track meal.meal_id) {
-                  <label><input type="checkbox" [checked]="menuFor(i).includes(meal.meal_id)" (change)="toggleMeal(i, meal.meal_id)"> {{ meal.name }}</label>
-                }
-              </div>
-            </details>
-          }
-        } @else {
-          <p class="muted">Agrega opciones en <a routerLink="/comidas">Comidas</a> para elegirlas aquí.</p>
-        }
       </details>
-      <button class="btn" type="submit" [disabled]="form.invalid">{{ editingId ? 'Guardar cambios' : 'Crear plan' }}</button>
+
+      <footer class="form-footer">
+        <button class="btn" type="submit" [disabled]="form.invalid">{{ editingId ? 'Guardar cambios' : 'Crear plan' }}</button>
+      </footer>
     </form>
-    <section class="plan-list">
+
+    <section class="plan-list" aria-labelledby="saved-plans">
+      <h2 id="saved-plans">Planes guardados</h2>
       @for (plan of plans; track plan.id) {
         <article class="card plan-card">
-          <div><h2>{{ plan.client_name }}</h2><p class="muted">{{ plan.plan_type }} · semana {{ plan.current_week }}/{{ plan.plan_length_in_weeks }}</p></div>
-          <div class="actions"><button class="btn secondary" type="button" (click)="edit(plan)">Editar</button><button class="btn danger" type="button" (click)="remove(plan)">Eliminar</button></div>
+          <div>
+            <h3>{{ plan.client_name }}</h3>
+            <p class="muted">{{ plan.plan_type }} · semana {{ plan.current_week }}/{{ plan.plan_length_in_weeks }}</p>
+          </div>
+          <div class="actions">
+            <button class="btn secondary" type="button" (click)="edit(plan)">Editar</button>
+            <button class="btn danger" type="button" (click)="remove(plan)">Eliminar</button>
+          </div>
         </article>
-      } @empty { <article class="card empty">Todavia no hay planes.</article> }
+      } @empty {
+        <p class="card empty muted">Aquí aparecerán los planes que guardes.</p>
+      }
     </section>
   </div>
 </div>
