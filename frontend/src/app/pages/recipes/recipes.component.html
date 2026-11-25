@@ -1,34 +1,19 @@
 <div class="page">
   <div class="page-header">
-    <h1>Recetas</h1>
-    @if (editingId) { <button class="btn secondary" type="button" (click)="reset()">Cancelar edicion</button> }
+    <div><h1>¿Qué podemos cocinar?</h1><p class="muted">Elige lo que tienes en casa y encuentra ideas para aprovecharlo.</p></div>
+    @if (!editorOpen) { <button class="btn secondary" type="button" (click)="openEditor()">Escribir mi receta</button> }
   </div>
 
   <div class="grid recipe-layout">
-    <form class="card recipe-form" [formGroup]="form" (ngSubmit)="submit()">
-      <h2>{{ editingId ? 'Editar receta' : 'Nueva receta' }}</h2>
-      @if (error) { <p class="error">{{ error }}</p> }
-      <div class="grid two">
-        <div class="field"><label>Titulo</label><input formControlName="title"></div>
-        <div class="field"><label>ID de comida</label><input formControlName="meal_id"></div>
-      </div>
-      <div class="field"><label>Descripcion</label><textarea formControlName="description"></textarea></div>
-      <div class="field"><label>URL de imagen</label><input type="url" formControlName="image_url"></div>
-      <div class="grid three">
-        <div class="field"><label>Minutos</label><input type="number" formControlName="time_minutes"></div>
-        <div class="field"><label>Nivel de precio (1-5)</label><input type="number" min="1" max="5" formControlName="price_level"></div>
-        <div class="field"><label>Preparacion semanal</label><select formControlName="isMealPrepRecipe"><option [ngValue]="false">No</option><option [ngValue]="true">Si</option></select></div>
-      </div>
-      <div class="field"><label>Instrucciones</label><textarea formControlName="instructions"></textarea></div>
-      <div class="field"><label>Etiquetas separadas por comas</label><input formControlName="tagsText" placeholder="Ligera, Vegano"></div>
+    <section class="card recipe-form" aria-label="Ingredientes e ideas de recetas">
       <div class="ingredient-builder">
         <div class="ingredient-catalog">
           <div class="ingredient-builder-header">
             <div>
-              <span class="eyebrow">Biblioteca</span>
-              <h3>Arrastra alimentos</h3>
+              <h2>Elige tus ingredientes</h2>
             </div>
           </div>
+          <p class="ingredient-hint">Arrastra un ingrediente o pulsa su tarjeta para agregarlo.</p>
           <div class="catalog-controls">
             <input
               type="search"
@@ -36,124 +21,170 @@
               placeholder="Buscar ingrediente..."
               [value]="catalogSearch"
               (input)="catalogSearch = $any($event.target).value">
-            <div class="category-chips" aria-label="Categorias de ingredientes">
+            <div class="category-chips" aria-label="Categorías de ingredientes">
               @for (category of catalogCategories; track category) {
                 <button
                   type="button"
                   [class.selected]="catalogCategory === category"
+                  [attr.aria-pressed]="catalogCategory === category"
                   (click)="catalogCategory = category">
                   {{ category }}
                 </button>
               }
             </div>
           </div>
-          <div class="catalog-grid">
+          <div class="catalog-grid" cdkScrollable cdkDropList
+            [cdkDropListData]="catalogIngredients"
+            [cdkDropListConnectedTo]="[recipeDropZone]"
+            cdkDropListSortingDisabled>
             @for (ingredient of visibleCatalogIngredients(); track ingredient.label) {
               <button
                 type="button"
                 class="ingredient-card"
                 cdkDrag
                 [cdkDragData]="ingredient"
+                [cdkDragStartDelay]="{ touch: 180, mouse: 0 }"
+                [cdkDragDisabled]="isSelected(ingredient)"
+                [disabled]="isSelected(ingredient)"
                 (click)="addIngredient(ingredient)"
                 [attr.aria-label]="'Agregar ' + ingredient.label">
-                <img [src]="photoUrl(ingredient.label)" [alt]="ingredient.label" draggable="false" (error)="setPhotoFallback($event)">
+                <img [src]="photoUrl(ingredient.label)" alt="" loading="lazy" draggable="false" (error)="setPhotoFallback($event)">
                 <span>{{ ingredient.label }}</span>
-                <small>{{ ingredient.amount }} {{ ingredient.unit }}</small>
+                <small>{{ isSelected(ingredient) ? 'Agregado' : ingredient.amount + ' ' + ingredient.unit }}</small>
               </button>
+            } @empty {
+              <p class="muted">No hay ingredientes que coincidan.</p>
             }
           </div>
         </div>
 
-        <div
-          class="recipe-dropzone"
+        <div class="recipe-dropzone">
+          <div class="ingredient-builder-header">
+            <h3>{{ editorOpen ? 'En tu receta' : 'Lo que tienes' }}</h3>
+            <span class="drop-count" aria-live="polite">{{ selectedIngredients.length }}</span>
+          </div>
+          <div class="selected-list" cdkScrollable
           cdkDropList
+          #recipeDropZone="cdkDropList"
           [cdkDropListData]="selectedIngredients"
           (cdkDropListDropped)="dropIngredient($event)">
-          <div class="ingredient-builder-header">
-            <div>
-              <span class="eyebrow">En la receta</span>
-              <h3>Ingredientes seleccionados</h3>
-            </div>
-            <span class="drop-count">{{ selectedIngredients.length }}</span>
-          </div>
-
-          @if (selectedIngredients.length) {
-            <div class="selected-list">
-              @for (ingredient of selectedIngredients; track ingredient.label + $index; let i = $index) {
+              @for (ingredient of selectedIngredients; track ingredient; let i = $index) {
                 <article class="selected-ingredient" cdkDrag [cdkDragData]="ingredient">
-                  <span class="drag-handle" aria-label="Arrastrar para reordenar">⠿</span>
-                  <img [src]="photoUrl(ingredient.label)" [alt]="ingredient.label" draggable="false" (error)="setPhotoFallback($event)">
+                  <span class="drag-handle" cdkDragHandle title="Arrastrar para reordenar" aria-hidden="true">⠿</span>
+                  <img [src]="photoUrl(ingredient.label)" alt="" draggable="false" (error)="setPhotoFallback($event)">
                   <strong>{{ ingredient.label }}</strong>
                   <input
-                    aria-label="Cantidad"
+                    [attr.aria-label]="'Cantidad de ' + ingredient.label"
                     [value]="ingredient.amount"
                     (input)="updateIngredient(i, 'amount', $any($event.target).value)">
                   <input
-                    aria-label="Unidad"
+                    [attr.aria-label]="'Unidad de ' + ingredient.label"
                     [value]="ingredient.unit"
                     (input)="updateIngredient(i, 'unit', $any($event.target).value)">
-                  <button type="button" class="remove-ingredient" (click)="removeSelectedIngredient(i)" aria-label="Quitar ingrediente">×</button>
+                  <button type="button" class="remove-ingredient" (click)="removeSelectedIngredient(i)" [attr.aria-label]="'Quitar ' + ingredient.label">×</button>
                 </article>
+              } @empty {
+                <div class="drop-placeholder">
+                  <span aria-hidden="true">＋</span>
+                  <p>Arrastra ingredientes aquí o toca sus tarjetas.</p>
+                </div>
               }
-            </div>
-          } @else {
-            <div class="drop-placeholder">
-              <span>＋</span>
-              <p>Arrastra aqui los ingredientes</p>
-            </div>
-          }
+          </div>
         </div>
       </div>
 
-      @if (selectedIngredients.length) {
-        <section class="recommendations-panel" aria-live="polite">
+        <section class="recommendations-panel" [attr.aria-busy]="recommendationsLoading">
           <div class="recommendations-header">
             <div>
-              <span class="eyebrow">Sugerencias inteligentes</span>
-              <h3>Recetas que coinciden</h3>
+              <h2>{{ selectedIngredients.length ? 'Ideas con tus ingredientes' : 'Ideas para empezar' }}</h2>
             </div>
-            @if (recommendationsLoading) { <small class="muted">Analizando...</small> }
+            @if (recommendationsLoading) { <small class="muted" role="status">Buscando recetas…</small> }
           </div>
           <div class="recommendation-grid">
-            @for (recipe of recommendations; track recipe.id) {
+            @for (recipe of recommendations; track recipe.recommendation_key) {
               <article class="recommendation-card">
                 <div class="recommendation-image">
                   @if (recipe.image_url) {
                     <img [src]="recipe.image_url" [alt]="recipe.title" loading="lazy" (error)="setPhotoFallback($event)">
                   } @else {
-                    <img [src]="photoUrl(recipe.ingredients?.[0]?.label || 'comida')" [alt]="recipe.title" loading="lazy" (error)="setPhotoFallback($event)">
+                    <img [src]="photoUrl(recipe.ingredients?.[0]?.label || '')" alt="" loading="lazy" (error)="setPhotoFallback($event)">
                   }
-                  <span class="match-score">{{ recipe.match_score }}% match</span>
+                  <span class="match-score">{{ recipe.time_minutes }} min</span>
                 </div>
                 <div class="recommendation-copy">
                   <h4>{{ recipe.title }}</h4>
-                  <p class="muted">
-                    {{ recipe.matching_ingredients }} ingrediente(s) coincidente(s)
-                  </p>
-                  <button type="button" class="btn secondary" (click)="useRecommendation(recipe)">
-                    Usar estructura
-                  </button>
+                  @if (recipe.matched_ingredients?.length) {
+                    <p><strong>Tienes</strong> {{ recipe.matched_ingredients?.join(', ') }}</p>
+                    @if (recipe.missing_ingredients?.length) {
+                      <p><strong>Te falta</strong> {{ recipe.missing_ingredients?.join(', ') }}</p>
+                    } @else {
+                      <p class="ready">Tienes todos los ingredientes de la lista.</p>
+                    }
+                  }
+                  <details>
+                    <summary>Ver cómo se prepara</summary>
+                    <ul>
+                      @for (ingredient of recipe.ingredients; track $index) {
+                        <li>{{ ingredient.amount }} {{ ingredient.unit }} de {{ ingredient.label }}</li>
+                      }
+                    </ul>
+                    <p class="recipe-steps">{{ recipe.instructions }}</p>
+                    <button type="button" class="btn secondary" (click)="useRecommendation(recipe)">Personalizar receta</button>
+                  </details>
                 </div>
               </article>
             } @empty {
-              @if (!recommendationsLoading) {
-                <p class="muted recommendation-empty">No hay recetas coincidentes todavía.</p>
+              @if (recommendationError) {
+                <div><p>No pudimos cargar las ideas.</p><button class="btn secondary" type="button" (click)="refreshRecommendations()">Volver a intentar</button></div>
+              } @else if (!recommendationsLoading) {
+                <p class="muted recommendation-empty">No encontramos recetas con esos ingredientes. Prueba con otro ingrediente que tengas.</p>
               }
             }
           </div>
         </section>
+      @if (editorOpen) {
+        <form class="recipe-editor" [formGroup]="form" (ngSubmit)="submit()">
+          <h2 #editorHeading tabindex="-1">{{ editingId ? 'Editar tu receta' : 'Guardar una receta' }}</h2>
+          <p class="muted">Puedes ajustar los ingredientes en la lista de arriba.</p>
+          @if (error) { <p class="error" role="alert">{{ error }}</p> }
+          <div class="grid two">
+            <div class="field"><label for="recipe-title">Nombre de la receta</label><input id="recipe-title" formControlName="title" required></div>
+            <div class="field"><label for="recipe-time">Tiempo de preparación (minutos)</label><input id="recipe-time" type="number" min="1" formControlName="time_minutes"></div>
+          </div>
+          <div class="field"><label for="recipe-steps">¿Cómo se prepara?</label><textarea id="recipe-steps" formControlName="instructions" required></textarea></div>
+          <details class="recipe-options">
+            <summary>Más detalles de la receta (opcional)</summary>
+            <div class="field"><label for="recipe-description">Una nota sobre el plato</label><textarea id="recipe-description" formControlName="description"></textarea></div>
+            <div class="grid two">
+              <div class="field"><label for="recipe-picture">Enlace a una foto</label><input id="recipe-picture" type="url" formControlName="image_url"></div>
+              <div class="field"><label for="recipe-price">Costo aproximado</label><select id="recipe-price" formControlName="price_level">
+                <option [ngValue]="1">Muy económico</option><option [ngValue]="2">Económico</option><option [ngValue]="3">Moderado</option><option [ngValue]="4">Alto</option><option [ngValue]="5">Muy alto</option>
+              </select></div>
+            </div>
+            <div class="field"><label for="recipe-tags">Etiquetas (separadas por comas)</label><input id="recipe-tags" formControlName="tagsText" placeholder="Desayuno, Vegetariana"></div>
+            <p><label><input type="checkbox" formControlName="isMealPrepRecipe"> Se puede preparar con anticipación</label></p>
+            <h3>Información nutricional</h3>
+            <div class="grid two">
+              @for (field of nutritionFields; track field.key) {
+                <div class="field"><label [for]="'recipe-' + field.key">{{ field.label }}</label><input [id]="'recipe-' + field.key" type="number" min="0" step="any" [formControlName]="field.key"></div>
+              }
+            </div>
+          </details>
+          <div class="actions">
+            <button class="btn" type="submit" [disabled]="form.invalid || saving">{{ saving ? 'Guardando…' : 'Guardar receta' }}</button>
+            <button class="btn secondary" type="button" (click)="reset()" [disabled]="saving">Cancelar</button>
+          </div>
+        </form>
       }
-
-      <div class="field"><label>Informacion nutricional (JSON)</label><textarea formControlName="nutritionalInfo"></textarea></div>
-      <button class="btn" type="submit" [disabled]="form.invalid">{{ editingId ? 'Guardar cambios' : 'Crear receta' }}</button>
-    </form>
+    </section>
 
     <section class="recipe-list">
+      <h2>Mis recetas</h2>
       @for (recipe of recipes; track recipe.id) {
         <article class="card recipe-card">
           <div>
             <h2>{{ recipe.title }}</h2>
-            <p class="muted">{{ recipe.time_minutes }} min · nivel {{ recipe.price_level }}</p>
+            <p class="muted">{{ recipe.time_minutes }} min</p>
             @if (recipe.ingredients?.length) {
               <div class="recipe-ingredient-preview">
                 @for (ingredient of recipe.ingredients || []; track ingredient.label) {

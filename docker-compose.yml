@@ -34,6 +34,7 @@ services:
       - DJANGO_SECRET_KEY=django-insecure-local-development-key
       - DJANGO_DEBUG=true
       - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,app
+      - OPEN_FOOD_FACTS_USER_AGENT=${OPEN_FOOD_FACTS_USER_AGENT:-PortalNutricional/1.0 (student@example.com)}
     depends_on:
       db:
         condition: service_healthy

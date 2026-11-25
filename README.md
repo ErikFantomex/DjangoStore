@@ -1,5 +1,7 @@
 # 🍽️ Portal de Gestión Nutricional
 
+**Prototipo Docker + API + base de datos + visualización:** consulta la [guía de la actividad](docs/PROTOTIPO_DATOS.md) para ejecutar y demostrar la integración de Open Food Facts con PostgreSQL y Angular.
+
 Web App para Nutriólogos | Django
 
 ---

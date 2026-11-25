@@ -5,7 +5,6 @@ import { ShellComponent } from './shell/shell.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { RecipesComponent } from './pages/recipes/recipes.component';
 import { MealPlansComponent } from './pages/meal-plans/meal-plans.component';
 import { MealsComponent } from './pages/meals/meals.component';
 import { ProfileComponent } from './pages/profile/profile.component';
@@ -19,9 +18,10 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: '', component: DashboardComponent },
-      { path: 'recetas', component: RecipesComponent },
+      { path: 'recetas', loadComponent: () => import('./pages/recipes/recipes.component').then(page => page.RecipesComponent) },
       { path: 'planes', component: MealPlansComponent },
       { path: 'comidas', component: MealsComponent },
+      { path: 'datos-nutricionales', loadComponent: () => import('./pages/food-data/food-data.component').then(page => page.FoodDataComponent) },
       { path: 'perfil', component: ProfileComponent }
     ]
   },

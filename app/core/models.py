@@ -128,7 +128,7 @@ class Recipe(models.Model):
     meal_id = models.CharField(max_length=10)
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, default='')
-    image_url = models.URLField()
+    image_url = models.URLField(blank=True)
     isMealPrepRecipe = models.BooleanField(default=False)
     time_minutes = models.PositiveIntegerField()
     price_level = models.PositiveIntegerField()

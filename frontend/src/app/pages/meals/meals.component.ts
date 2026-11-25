@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiService } from '../../core/api.service';
 import { Meal } from '../../core/models';
+import { newRecordCode } from '../../core/record-code';
 
 @Component({
   standalone: true,
@@ -16,7 +17,7 @@ export class MealsComponent implements OnInit {
   editingId: number | null = null;
   error = '';
   form = this.fb.nonNullable.group({
-    meal_id: ['', Validators.required],
+    meal_id: '',
     name: ['', Validators.required]
   });
 
@@ -26,6 +27,7 @@ export class MealsComponent implements OnInit {
   submit(): void {
     if (this.form.invalid) return;
     const payload = this.form.getRawValue();
+    if (!payload.meal_id) payload.meal_id = newRecordCode();
     const request = this.editingId
       ? this.api.updateMeal(this.editingId, payload)
       : this.api.createMeal(payload);

@@ -113,6 +113,24 @@ class RecipeApiTests(TestCase):
         self.assertEqual(response.data[0]['title'], 'Receta de prueba')
         self.assertGreater(response.data[0]['match_score'], 0)
 
+    def test_new_account_gets_ideas_and_can_match_ingredient_aliases(self):
+        url = '/api/recipe/recipes/recommend/'
+        initial = self.client.post(url, {'ingredients': []}, format='json')
+        self.assertEqual(initial.status_code, status.HTTP_200_OK)
+        self.assertTrue(initial.data)
+        self.assertTrue(initial.data[0]['instructions'])
+        self.assertFalse(Recipe.objects.filter(user=self.user).exists())
+
+        ingredients = ['TORTILLAS', 'nopal', 'queso panela', ' Jitomate ', 'pera']
+        response = self.client.post(url, {'ingredients': ingredients}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        first = response.data[0]
+        self.assertEqual(first['title'], 'Tacos de nopal y queso panela')
+        self.assertEqual(first['match_score'], 100)
+        self.assertEqual(first['missing_ingredients'], [])
+        self.assertIn('Tomate', first['matched_ingredients'])
+        self.assertTrue(response.data[1]['missing_ingredients'])
+
     def test_reject_invalid_price_level(self):
         payload = {
             'title': 'Invalida',

@@ -10,4 +10,9 @@
 .day-picker button { border:1px solid var(--border); background:white; border-radius:999px; padding:.55rem .7rem; cursor:pointer; }
 .day-picker button.selected { background:var(--primary); color:white; border-color:var(--primary); }
 .empty { padding:1.25rem; }
+.plan-section { margin-bottom:1rem; padding:.7rem; border:1px solid var(--border); border-radius:10px; }
+.plan-section summary { cursor:pointer; color:var(--primary); font-weight:700; }
+.plan-section[open] > summary { margin-bottom:.65rem; }
+.meal-choices { display:flex; flex-wrap:wrap; gap:.5rem .9rem; margin:.4rem 0 .7rem; }
+.menu-day { margin:.55rem 0; }
 @media (max-width:980px) { .plan-layout { grid-template-columns:1fr; } }

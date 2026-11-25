@@ -1,0 +1,114 @@
+<div class="page food-page">
+  <div class="page-header">
+    <div>
+      <h1>Explora y compara alimentos</h1>
+      <p class="muted">Elige los alimentos que te interesan y compara sus datos en la misma cantidad: 100 g.</p>
+    </div>
+  </div>
+
+  <section class="card import-card" aria-labelledby="import-title">
+    <h2 id="import-title">Catálogo de alimentos</h2>
+    <p class="muted catalog-credit">Datos y fotos de <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts</a>.</p>
+    <form (ngSubmit)="importProduct()" class="import-form">
+      <div class="field product-search">
+        <label for="product-search">Buscar en el catálogo</label>
+        <input id="product-search" name="search" type="search" [(ngModel)]="search" (ngModelChange)="visibleCount = 12" placeholder="Por ejemplo, avena o atún">
+      </div>
+      <div class="category-filters" aria-label="Filtrar por tipo de alimento">
+        @for (group of categories; track group) {
+          <button type="button" [class.is-selected]="group === category" [attr.aria-pressed]="group === category" (click)="filterBy(group)">{{ group }}</button>
+        }
+      </div>
+      @let results = catalog;
+      <p class="muted results-count" role="status">{{ results.length }} {{ results.length === 1 ? 'producto' : 'productos' }}</p>
+      <fieldset class="product-options" [disabled]="importing">
+        <legend class="visually-hidden">Productos disponibles</legend>
+        @for (product of results.slice(0, visibleCount); track product.barcode) {
+          <label class="product-option" [class.is-selected]="selectedProduct === product">
+            <input type="radio" name="catalogProduct" [checked]="selectedProduct === product" (change)="selectProduct(product)">
+            <img [src]="product.imageUrl" alt="" loading="lazy" (error)="useFallback($event)">
+            <strong>{{ product.name }}</strong>
+            <span>{{ product.brand }} · {{ product.description }}</span>
+          </label>
+        } @empty {
+          <p class="muted">No encontramos ese alimento. Prueba con otra palabra o categoría.</p>
+        }
+      </fieldset>
+      <div class="import-actions">
+        <button class="btn" type="submit" [disabled]="!selectedProduct || importing">
+          {{ importing ? 'Agregando…' : 'Agregar a la comparación' }}
+        </button>
+        <span *ngIf="selectedProduct" class="muted">{{ selectedProduct.name }}</span>
+        @if (results.length > visibleCount) {
+          <button type="button" class="btn secondary more-products" (click)="visibleCount = visibleCount + 12">Ver más alimentos</button>
+        }
+      </div>
+    </form>
+    <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+    <p class="success" role="status" *ngIf="message">{{ message }}</p>
+  </section>
+
+  <section class="grid three stats" aria-label="Indicadores de productos guardados">
+    <div class="card stat"><span>Alimentos en la comparación</span><strong>{{ summary.count }}</strong></div>
+    <div class="card stat"><span>Calorías promedio</span><strong>{{ summary.average_calories === null ? '—' : (summary.average_calories | number:'1.0-1') }}</strong><small>kcal / 100 g</small></div>
+    <div class="card stat"><span>Proteínas promedio</span><strong>{{ summary.average_protein === null ? '—' : (summary.average_protein | number:'1.0-1') }}</strong><small>g / 100 g</small></div>
+  </section>
+
+  <p class="muted" *ngIf="loading">Cargando datos guardados…</p>
+  <div *ngIf="!loading && products.length === 0" class="card empty-state">
+    Todavía no hay productos guardados. Elige uno del catálogo para empezar a comparar.
+  </div>
+
+  <section *ngIf="products.length" class="grid two charts">
+    <article class="card chart-card">
+      <h2>Calorías por producto</h2>
+      <p class="muted">Comparación de hasta diez productos, ordenados de mayor a menor.</p>
+      <div *ngFor="let product of chartProducts" class="bar-row">
+        <span class="bar-label" [title]="product.name">{{ product.name }}</span>
+        <div class="bar-track"><div class="bar-fill" [style.width.%]="calorieWidth(product)"></div></div>
+        <strong>{{ product.calories_100g | number:'1.0-1' }}</strong>
+      </div>
+      <p class="muted" *ngIf="!chartProducts.length">No hay productos con calorías disponibles.</p>
+    </article>
+    <article class="card chart-card">
+      <h2>Macronutrientes por 100 g</h2>
+      <p class="muted">Proteínas, carbohidratos y grasas de cada producto.</p>
+      <div *ngFor="let product of chartProducts" class="macro-row">
+        <strong [title]="product.name">{{ product.name }}</strong>
+        <div class="macro-track" [attr.aria-label]="product.name + ': proteínas ' + (product.protein_100g ?? 'sin dato') + ', carbohidratos ' + (product.carbohydrates_100g ?? 'sin dato') + ', grasas ' + (product.fat_100g ?? 'sin dato')">
+          <span class="protein" [style.width.%]="macroWidth(product.protein_100g)"></span>
+          <span class="carbs" [style.width.%]="macroWidth(product.carbohydrates_100g)"></span>
+          <span class="fat" [style.width.%]="macroWidth(product.fat_100g)"></span>
+        </div>
+      </div>
+      <div class="legend"><span><i class="protein"></i> Proteínas</span><span><i class="carbs"></i> Carbohidratos</span><span><i class="fat"></i> Grasas</span></div>
+    </article>
+  </section>
+
+  <section class="card table-card" *ngIf="products.length">
+    <h2>Alimentos en la comparación</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Producto</th><th>kcal</th><th>Proteínas</th><th>Carbohidratos</th><th>Grasas</th><th>Azúcares</th><th>Nutri-Score</th><th>Actualizado</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let product of products">
+            <td>
+              <div class="stored-product">
+                <img [src]="imageFor(product)" alt="" loading="lazy" (error)="useFallback($event)">
+                <div><a [href]="product.source_url" target="_blank" rel="noopener noreferrer">{{ product.name }}</a><small>{{ product.brand }}</small></div>
+              </div>
+            </td>
+            <td>{{ product.calories_100g === null ? '—' : (product.calories_100g | number:'1.0-1') }}</td>
+            <td>{{ product.protein_100g === null ? '—' : (product.protein_100g | number:'1.0-1') }}</td>
+            <td>{{ product.carbohydrates_100g === null ? '—' : (product.carbohydrates_100g | number:'1.0-1') }}</td>
+            <td>{{ product.fat_100g === null ? '—' : (product.fat_100g | number:'1.0-1') }}</td>
+            <td>{{ product.sugars_100g === null ? '—' : (product.sugars_100g | number:'1.0-1') }}</td>
+            <td>{{ product.nutriscore ? (product.nutriscore | uppercase) : '—' }}</td>
+            <td>{{ product.fetched_at | date:'short' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted source-note">Fuente: <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts</a>. Los datos provienen de contribuciones abiertas y pueden estar incompletos.</p>
+  </section>
+</div>

@@ -1,17 +1,23 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Ingredient, Meal, MealPlan, Recipe, Tag } from './models';
+import { FoodProduct, FoodSummary, Ingredient, Meal, MealPlan, Recipe, RecipeSuggestion, Tag } from './models';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private http = inject(HttpClient);
 
+  foodProducts(): Observable<FoodProduct[]> { return this.http.get<FoodProduct[]>('/api/food/products/'); }
+  importFoodProduct(barcode: string): Observable<FoodProduct> {
+    return this.http.post<FoodProduct>('/api/food/products/import/', { barcode });
+  }
+  foodSummary(): Observable<FoodSummary> { return this.http.get<FoodSummary>('/api/food/summary/'); }
+
   recipes(): Observable<Recipe[]> { return this.http.get<Recipe[]>('/api/recipe/recipes/'); }
   recipe(id: number): Observable<Recipe> { return this.http.get<Recipe>(`/api/recipe/recipes/${id}/`); }
   createRecipe(payload: Recipe): Observable<Recipe> { return this.http.post<Recipe>('/api/recipe/recipes/', payload); }
-  recommendRecipes(ingredients: string[]): Observable<Recipe[]> {
-    return this.http.post<Recipe[]>('/api/recipe/recipes/recommend/', { ingredients });
+  recommendRecipes(ingredients: string[]): Observable<RecipeSuggestion[]> {
+    return this.http.post<RecipeSuggestion[]>('/api/recipe/recipes/recommend/', { ingredients });
   }
   updateRecipe(id: number, payload: Partial<Recipe>): Observable<Recipe> { return this.http.patch<Recipe>(`/api/recipe/recipes/${id}/`, payload); }
   deleteRecipe(id: number): Observable<void> { return this.http.delete<void>(`/api/recipe/recipes/${id}/`); }

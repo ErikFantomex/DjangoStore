@@ -13,6 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.views import generic
 from core.models import Recipe, Tag, Ingredient,Meal,MealPlan
 from recipe import serializers
+from recipe.ideas import idea_recipes, ingredient_key, match_recipe
 
 
 #Vistas del Recipiente
@@ -96,54 +97,38 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """Recomendar recetas por coincidencia con ingredientes seleccionados."""
         ingredients = request.data.get('ingredients', [])
         if isinstance(ingredients, str):
-            ingredients = [
-                item.strip()
-                for item in ingredients.replace(',', ' ').split()
-                if item.strip()
-            ]
-        if not isinstance(ingredients, list):
+            ingredients = ingredients.split(',')
+        if not isinstance(ingredients, list) or any(
+            not isinstance(item, str) for item in ingredients
+        ):
             return Response(
                 {'ingredients': 'Debe ser una lista.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        selected = {
-            str(item).strip().lower()
-            for item in ingredients
-            if str(item).strip()
-        }
+        selected = {ingredient_key(item) for item in ingredients if item.strip()}
         if not selected:
-            return Response([], status=status.HTTP_200_OK)
+            return Response(list(idea_recipes())[:6])
 
-        ranked = []
-        queryset = self.get_queryset()
-        for recipe in queryset.prefetch_related('ingredients'):
-            recipe_ingredients = {
-                ingredient.label.strip().lower()
-                for ingredient in recipe.ingredients.all()
-            }
-            if not recipe_ingredients:
-                continue
-            matches = selected & recipe_ingredients
-            union = selected | recipe_ingredients
-            score = len(matches) / len(union)
-            if matches:
-                ranked.append((score, len(matches), recipe))
-
-        ranked.sort(key=lambda item: (item[0], item[1]), reverse=True)
-        data = serializers.RecipeSerializer(
-            [item[2] for item in ranked[:20]],
+        queryset = self.get_queryset().prefetch_related('ingredients', 'tags')
+        saved_recipes = serializers.RecipeDetailSerializer(
+            queryset,
             many=True,
             context={'request': request},
         ).data
-        return Response([
-            {
-                **recipe_data,
-                'match_score': round(ranked[index][0] * 100),
-                'matching_ingredients': ranked[index][1],
-            }
-            for index, recipe_data in enumerate(data)
-        ])
+        candidates = [
+            {**recipe, 'recommendation_key': f"saved:{recipe['id']}"}
+            for recipe in saved_recipes
+        ]
+        candidates.extend(idea_recipes())
+        ranked = [match_recipe(recipe, selected) for recipe in candidates]
+        ranked = [recipe for recipe in ranked if recipe['matched_ingredients']]
+        ranked.sort(key=lambda recipe: (
+            len(recipe['missing_ingredients']),
+            -recipe['matching_ingredients'],
+            recipe['time_minutes'],
+        ))
+        return Response(ranked[:12])
 
     @action(methods=['POST'], detail=True, url_path='upload-image')
     def upload_image(self, request, pk=None):

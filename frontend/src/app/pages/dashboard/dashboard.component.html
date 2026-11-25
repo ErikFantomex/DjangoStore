@@ -1,8 +1,8 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <p class="muted">Resumen general</p>
-      <h1>Hola, {{ name || 'nutriologo' }}</h1>
+      <h1>{{ name ? 'Hola, ' + name : 'Te damos la bienvenida' }}</h1>
+      <p class="muted">Encuentra ideas para cocinar y compara los alimentos que tienes a mano.</p>
     </div>
   </div>
 
@@ -14,14 +14,14 @@
 
   <section class="grid two quick-actions">
     <article class="card">
-      <h2>Crear una receta</h2>
-      <p class="muted">Organiza ingredientes, etiquetas y datos nutricionales.</p>
-      <a class="btn" routerLink="/recetas">Abrir recetas</a>
+      <h2>¿Qué tienes en casa?</h2>
+      <p class="muted">Elige tus ingredientes y descubre qué puedes preparar con ellos.</p>
+      <a class="btn" routerLink="/recetas">Buscar ideas para cocinar</a>
     </article>
     <article class="card">
-      <h2>Preparar un plan</h2>
-      <p class="muted">Define objetivos, semanas y seguimiento del paciente.</p>
-      <a class="btn" routerLink="/planes">Abrir planes</a>
+      <h2>Compara alimentos</h2>
+      <p class="muted">Busca productos por nombre y compara sus datos nutricionales.</p>
+      <a class="btn" routerLink="/datos-nutricionales">Explorar alimentos</a>
     </article>
   </section>
 </div>
